@@ -1,0 +1,1798 @@
+{
+  // 关闭自动更新
+  "extensions.autoUpdate": false,
+  // 编辑器设置
+  // 界面主题
+  "workbench.colorTheme": "Hazel Flow Dark",
+  // 是否要确认是否信任新打开的文件
+  "security.workspace.trust.untrustedFiles": "open",
+  // 编辑器设置在保存时自动格式化
+  "editor.formatOnSave": false,
+  // 不要弹出确认拖放
+  "explorer.confirmDragAndDrop": false,
+  // 不要弹出确认删除
+  "explorer.confirmDelete": false,
+  // 在顶部显示代码嵌套第一行
+  "editor.stickyScroll.enabled": true,
+  // 开启编辑器的连字符设置
+  "editor.fontLigatures": true,
+  // 开始的编辑器
+  "workbench.startupEditor": "none",
+  // 关闭单击预览
+  "workbench.editor.enablePreview": false,
+  // 滚轮缩放
+  "editor.mouseWheelZoom": true,
+  // 关闭显卡加速
+  "terminal.integrated.gpuAcceleration": "off",
+  // png文件的默认打开方式
+  "workbench.editorAssociations": {
+    "*.png": "cweijan.officeViewer"
+  },
+  // 图标主题
+	"workbench.iconTheme": "material-icon-theme",
+  // html括号自动修改
+  "editor.linkedEditing": true,
+  // 打开文件时猜测编码集
+  "files.autoGuessEncoding": true,
+  // 设置相对行号
+  "editor.lineNumbers": "relative",
+  // #关闭自动传参建议和代码补全建议，使用按键手动触发（可选
+  "editor.parameterHints.enabled": false,
+  "editor.quickSuggestions": {
+    "comments": "on",
+    "strings": "on",
+    "other": "on"
+  },
+  // 光标的动画效果
+  "editor.cursorBlinking": "smooth",
+  "editor.cursorSmoothCaretAnimation": "on",
+  // 关闭编辑器的自动检测缩进设置
+  "editor.detectIndentation": false,
+  // 在某些情况下隐藏光标
+  "editor.hideCursorInOverviewRuler": true,
+  // 以下三行是为了隐藏滚动栏
+  "editor.scrollbar.horizontal": "hidden",
+  "editor.scrollbar.vertical": "hidden",
+  "editor.scrollbar.verticalScrollbarSize": 0,
+
+  // git设置
+  // 智能提交
+  "git.enableSmartCommit": true,
+  // git 不要弹窗确认是否同意 sync
+  "git.confirmSync": false,
+  // 关闭旧版git警告
+  "git.ignoreLegacyWarning": true,
+  "git.followTagsWhenSync": true,
+  "git.rebaseWhenSync": true,
+
+  // c/c++设置
+  // 默认c++标准
+  "C_Cpp.default.cppStandard": "c++11",
+  // 默认c标准
+  "C_Cpp.default.cStandard": "c11",
+  // 默认cmake可执行程序
+  "cmake.cmakePath": "cmake3",
+  // 关闭C/C++插件的自动补全功能
+  "C_Cpp.intelliSenseEngine": "disabled",
+  // clangd配置
+  "clangd.path": "c:\\Users\\Administrator\\AppData\\Roaming\\Code\\User\\globalStorage\\llvm-vs-code-extensions.vscode-clangd\\install\\15.0.6\\clangd_15.0.6\\bin\\clangd.exe",
+  "clangd.arguments": [
+    "--compile-commands-dir=build",
+    "-pretty",
+    "--clang-tidy",
+    "-j=12",
+    "--header-insertion=iwyu",
+    "--all-scopes-completion",
+    "--completion-style=detailed",
+    "--pch-storage=memory",
+    "--query-driver=C:\\Program Files\\mingw-w64\\mingw64\\bin\\g++.exe",
+    "--background-index"
+  ],
+
+  // 自动生成注释
+  // 头部注释
+  "fileheader.customMade": {
+    // Author字段是文件的创建者 可以在specialOptions中更改特殊属性
+    // 公司项目和个人项目可以配置不同的用户名与邮箱 搜索: gitconfig includeIf  比如: https://ayase.moe/2021/03/09/customized-git-config/
+    // 自动提取当前git config中的: 用户名、邮箱
+    "Author": "git config user.name && git config user.email", // 同时获取用户名与邮箱
+    // "Author": "git config user.name", // 仅获取用户名
+    // "Author": "git config user.email", // 仅获取邮箱
+    // "Author": "OBKoro1", // 写死的固定值 不从git config中获取
+    "Date": "Do not edit", // 文件创建时间(不变)
+    // LastEditors、LastEditTime、FilePath将会自动更新 如果觉得时间更新的太频繁可以使用throttleTime(默认为1分钟)配置更改更新时间。
+    "LastEditors": "git config user.name && git config user.email", // 文件最后编辑者 与Author字段一致
+    // 由于编辑文件就会变更最后编辑时间，多人协作中合并的时候会导致merge
+    // 可以将时间颗粒度改为周、或者月，这样冲突就减少很多。搜索变更时间格式: dateFormat
+    "LastEditTime": "Do not edit", // 文件最后编辑时间
+    // 输出相对路径，类似: /文件夹名称/src/index.js
+    "FilePath": "Do not edit", // 文件在项目中的相对路径 自动更新
+    // 插件会自动将光标移动到Description选项中 方便输入 Description字段可以在specialOptions更改
+    "Description": "", // 介绍文件的作用、文件的入参、出参。
+    // custom_string_obkoro1~custom_string_obkoro100都可以输出自定义信息
+    // 可以设置多条自定义信息 设置个性签名、留下QQ、微信联系方式、输入空行等
+    "custom_string_obkoro1": "",
+    // 版权声明 保留文件所有权利 自动替换年份 获取git配置的用户名和邮箱
+    // 版权声明获取git配置, 与Author字段一致: ${git_name} ${git_email} ${git_name_email}
+    "custom_string_obkoro1_copyright": "Copyright (c) ${now_year} by ${git_name_email}, All Rights Reserved. "
+    // "custom_string_obkoro1_copyright": "Copyright (c) ${now_year} by 写死的公司名/用户名, All Rights Reserved. "
+  },
+  // 函数注释
+  "fileheader.cursorMode": {
+    "description": "", // 函数注释生成之后，光标移动到这里
+    "param": "", // param 开启函数参数自动提取 需要将光标放在函数行或者函数上方的空白行
+    "return": ""
+  },
+  // 插件配置项
+  "fileheader.configObj": {
+    "autoAdd": true, // 检测文件没有头部注释，自动添加文件头部注释
+    "autoAddLine": 100, // 文件超过多少行数 不再自动添加头部注释
+    "autoAlready": true, // 只添加插件支持的语言以及用户通过`language`选项自定义的注释
+    "supportAutoLanguage": [], // 设置之后，在数组内的文件才支持自动添加
+    // 自动添加头部注释黑名单
+    "prohibitAutoAdd": ["json"],
+    "prohibitItemAutoAdd": [
+      "项目的全称禁止项目自动添加头部注释, 使用快捷键自行添加"
+    ],
+    "folderBlacklist": ["node_modules"], // 文件夹或文件名禁止自动添加头部注释
+    "wideSame": false, // 头部注释等宽设置
+    "wideNum": 13, // 头部注释字段长度 默认为13
+    "functionWideNum": 0, // 函数注释等宽设置 设为0 即为关闭
+    // 头部注释第几行插入
+    "headInsertLine": {
+      "php": 2 // php文件 插入到第二行
+    },
+    "beforeAnnotation": {}, // 头部注释之前插入内容
+    "afterAnnotation": {}, // 头部注释之后插入内容
+    "specialOptions": {}, // 特殊字段自定义 比如: Author、LastEditTime、LastEditors、FilePath、Description、Date等
+    "switch": {
+      "newlineAddAnnotation": true // 默认遇到换行符(\r\n \n \r)添加注释符号
+    },
+    "moveCursor": true, // 自动移动光标到Description所在行
+    "dateFormat": "YYYY-MM-DD HH:mm:ss",
+    "atSymbol": ["@", "@"], // 更改所有文件的自定义注释中的@符号
+    "atSymbolObj": {}, //  更改单独语言/文件的@
+    "colon": [": ", ": "], // 更改所有文件的注释冒号
+    "colonObj": {}, //  更改单独语言/文件的冒号
+    "filePathColon": "路径分隔符替换", // 默认值： mac: / window是: \
+    "showErrorMessage": false, // 是否显示插件错误通知 用于debugger
+    "writeLog": false, // 错误日志生成
+    "CheckFileChange": false, // 单个文件保存时进行diff检查
+    "createHeader": false, // 新建文件自动添加头部注释
+    "useWorker": false, // 是否使用工作区设置
+    "designAddHead": false, // 添加注释图案时添加头部注释
+    "headDesignName": "random", // 图案注释使用哪个图案
+    "headDesign": false, // 是否使用图案注释替换头部注释
+    // 自定义配置是否在函数内生成注释 不同文件类型和语言类型
+    "cursorModeInternalAll": {}, // 默认为false 在函数外生成函数注释
+    "openFunctionParamsCheck": true, // 开启关闭自动提取添加函数参数
+    "functionParamsShape": ["{", "}"], // 函数参数外形自定义
+    // "functionParamsShape": "no type" 函数参数不需要类型
+    "functionBlankSpaceAll": {}, // 函数注释空格缩进 默认为空对象 默认值为0 不缩进
+    "functionTypeSymbol": "*", // 参数没有类型时的默认值
+    "typeParamOrder": "type param", // 参数类型 和 参数的位置自定义
+    "NoMatchParams": "no show param", // 没匹配到函数参数，是否显示@param与@return这两行 默认不显示param
+    "functionParamAddStr": "", // 在 type param 后面增加字符串 可能是冒号，方便输入参数描述
+    // 自定义语言注释，自定义取消 head、end 部分
+    // 不设置自定义配置language无效 默认都有head、end
+    "customHasHeadEnd": {}, // "cancel head and function" | "cancel head" | "cancel function"
+    "throttleTime": 60000, // 对同一个文件 需要过1分钟再次修改文件并保存才会更新注释
+    // 自定义语言注释符号，覆盖插件的注释格式
+    "language": {
+      // js后缀文件
+      "js": {
+        "head": "/$$",
+        "middle": " $ @",
+        "end": " $/",
+        // 函数自定义注释符号：如果有此配置 会默认使用
+        "functionSymbol": {
+          "head": "/******* ", // 统一增加几个*号
+          "middle": " * @",
+          "end": " */"
+        },
+        "functionParams": "typescript" // 函数注释使用ts语言的解析逻辑
+      },
+      // 一次匹配多种文件后缀文件 不用重复设置
+      "h/hpp/cpp": {
+        "head": "/*** ", // 统一增加几个*号
+        "middle": " * @",
+        "end": " */"
+      },
+      // 针对有特殊要求的文件如：test.blade.php
+      "blade.php": {
+        "head": "<!--",
+        "middle": " * @",
+        "end": "-->"
+      }
+    },
+    // 默认注释  没有匹配到注释符号的时候使用。
+    "annotationStr": {
+      "head": "/*",
+      "middle": " * @",
+      "end": " */",
+      "use": false
+    }
+  },
+
+  // cmake设置
+  // 自动对打开的项目配置cmake
+  "cmake.configureOnOpen": false,
+
+  // vim配置
+  // 绑定vim前导键
+  "vim.leader": "<space>",
+  // 启用easymotion插件
+  "vim.easymotion": true,
+  // 开启 vim-surround
+  "vim.surround": true,
+  "vim.sneak": true,
+  // 启用系统粘贴板作为vim寄存器
+  "vim.useSystemClipboard": true,
+  // 由vim接管ctrl+any的按键，而不是vscode
+  "vim.useCtrlKeys": true,
+  // 突出显示与当前搜索匹配的所有文本
+  "vim.hlsearch": true,
+  // 自动切换输入法
+  "vim.autoSwitchInputMethod.enable": true,
+  "vim.autoSwitchInputMethod.defaultIM": "1033",
+  "vim.autoSwitchInputMethod.obtainIMCmd": "C:\\im-select.exe",
+  "vim.autoSwitchInputMethod.switchIMCmd": "C:\\im-select.exe {im}",
+  // 当输入一个搜索字符时，显示下一个匹配的结果
+  "vim.incsearch": true,
+  // 下面定义的按键将交由vscode进行处理，而不是vscode-vim插件
+  "vim.handleKeys": {
+    "<C-a>": false,
+    "<C-n>": false
+  },
+  // 普通模式下的非递归按键绑定
+  "vim.normalModeKeyBindings": [
+    // whichkey
+    {
+      "before": ["<leader>"],
+      "commands": ["whichkey.show"]
+    },
+    {
+      // 移動到行首
+      "before": ["H"],
+      "after": ["^"]
+    },
+    // 保存
+    {
+      "before": ["<leader>", "s"],
+      "commands": [":w!"]
+    },
+    // 退出
+    {
+      "before": ["<leader>", "q"],
+      "commands": [":q!"]
+    },
+    // 保存+退出
+    {
+      "before": ["<leader>", "sq"],
+      "commands": [":wq!"]
+    },
+    // tab翻頁
+    {
+      "before": ["<tab>"],
+      "commands": ["workbench.action.nextEditor"]
+    },
+    // 顯示vscode命令=>CTRL+shift+P
+    {
+      "before": ["<leader>", "g", "c"],
+      "commands": ["workbench.action.showCommands"]
+    },
+    // 右移到行尾
+    {
+      "before": ["L"],
+      "after": ["$"]
+    },
+    // 摺叠代碼塊
+    {
+      "before": ["z", "z"],
+      "commands": ["editor.toggleFold"]
+    },
+    // 跳轉到上一個問題
+    {
+      "before": ["g", "["],
+      "commands": ["editor.action.marker.prevInFiles"]
+    },
+    // 跳轉到下一個問題
+    {
+      "before": ["g", "]"],
+      "commands": ["editor.action.marker.nextInFiles"]
+    },
+    // gj gk下移不展開代碼塊
+    {
+      "before": ["j"],
+      "after": ["g", "j"]
+    },
+    // 上移不展開代碼塊
+    {
+      "before": ["k"],
+      "after": ["g", "k"]
+    },
+    // 刪除一整行
+    {
+      "before": ["<leader>", "d"],
+      "after": ["d", "d"]
+    },
+
+    {
+      "before": ["<C-n>"],
+      "commands": [":nohl"]
+    },
+    // 向下新增一行
+    {
+      "before": ["K"],
+      "commands": ["lineBreakInsert"],
+      "silent": true
+    },
+    // 侧边栏的显示和隐藏的快捷键，我映射成了 leader + b
+    {
+      "before": ["leader", "b"],
+      "commands": [
+        {
+          "command": "workbench.action.toggleSidebarVisibility"
+        }
+      ]
+    },
+    // 在左侧的文件管理器中打开当前文件
+    {
+      "before": ["leader", "f"],
+      "commands": [
+        {
+          "command": "actions.find"
+        }
+      ]
+    }, // 在左侧的文件管理器中打开当前文件
+    {
+      "before": ["leader", "w"],
+      "commands": [
+        {
+          "command": "workbench.action.closeActiveEditor"
+        }
+      ]
+    },
+    // 显示和隐藏左侧的活动栏
+    {
+      "before": ["leader", "a"],
+      "commands": [
+        {
+          "command": "workbench.action.toggleActivityBarVisibility"
+        }
+      ]
+    },
+    // 显示和隐藏底部的状态栏
+    {
+      "before": ["leader", "j"],
+      "commands": [
+        {
+          "command": "workbench.action.togglePanel"
+        }
+      ]
+    },
+    // 这个和 Ctrl + P 效果是等同的，即，快速搜索打开文件
+    {
+      "before": ["leader", "e"],
+      "commands": [
+        {
+          "command": "workbench.action.quickOpen"
+        }
+      ]
+    },
+    // 这个和 Ctrl + P 效果是等同的，即，快速搜索打开文件
+    {
+      "before": ["leader", "i"],
+      "commands": [
+        {
+          "command": "editor.action.showHover",
+          "when": "editorTextFocus"
+        }
+      ]
+    },
+    // 这个和 Ctrl + P 效果是等同的，即，快速搜索打开文件
+    {
+      "before": ["g", "u"],
+      "commands": [
+        {
+          "command": "editor.action.transformToLowercase"
+        }
+      ]
+    },
+    // 这个和 Ctrl + P 效果是等同的，即，快速搜索打开文件
+    {
+      "before": ["g", "U"],
+      "commands": [
+        {
+          "command": "editor.action.transformToUppercase"
+        }
+      ]
+    }
+  ],
+  // vim 在 normal 模式下非递归的键位绑定
+  "vim.normalModeKeyBindingsNonRecursive": [
+    // 将 u 和 VSCode 自身的撤销动作绑定
+    {
+      "before": ["u"],
+      "commands": ["undo"]
+    },
+    // 将 Ctrl + r 和 VSCode 自身的重做动作绑定
+    {
+      "before": ["C-r"],
+      "commands": ["redo"]
+    }
+  ],
+  // 插入模式下的非递归按键绑定
+  "vim.insertModeKeyBindings": [
+    // 退出到normal模式
+    {
+      "before": ["j", "k"],
+      "after": ["<Esc>"]
+    }
+  ],
+  // 命令模式下的非递归按键绑定
+  "vim.commandLineModeKeyBindingsNonRecursive": [],
+  // 可视模式下的非递归按键绑定
+  "vim.operatorPendingModeKeyBindings": [],
+  // vim 的 visual 模式下的键位绑定
+  "vim.visualModeKeyBindings": [
+    // 向右缩进，可以重复使用
+    {
+      "before": [">"],
+      "commands": ["editor.action.indentLines"]
+    },
+    // 向左缩进，可以重复使用
+    {
+      "before": ["<"],
+      "commands": ["editor.action.outdentLines"]
+    },
+    // whichkey
+    {
+      "before": ["<leader>"],
+      "commands": ["whichkey.show"]
+    }
+  ],
+  // vim 的 easymotion 插件的高亮字符的前景色
+  "vim.easymotionMarkerForegroundColorOneChar": "#DF5452",
+  // markdown预览模式设置
+  "markdown.preview.scrollEditorWithPreview": false,
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // 自动生成cpp类定义、声明
+  "CppHelper.SourcePattern": [
+    "{FILE}.cpp",
+    "{FILE}.c",
+    "{FILE}.inl",
+    "/src/{FILE}.cpp"
+  ],
+
+  // js和ts设置
+  "typescript.locale": "zh-CN",
+  "typescript.suggest.paths": false,
+  "javascript.suggest.paths": false,
+
+  // whichkey设置
+  "whichkey.bindings": [
+    //code runner
+    {
+      "key": "r",
+      "name": "+RunCoder",
+      "type": "binding",
+      "binding": [
+        {
+          "key": "r",
+          "name": "Run Coder",
+          "type": "command",
+          "command": "code-runner.run"
+        },
+        {
+          "key": "s",
+          "name": "Stop",
+          "type": "command",
+          "command": "code-runner.stop"
+        }
+      ]
+    },
+    // gitlens
+    {
+      "key": "g",
+      "name": "+Git",
+      "type": "binding",
+      "binding": [
+        {
+          "key": "b",
+          "name": "checkout",
+          "type": "command",
+          "command": "git.checkout"
+        },
+        {
+          "key": "c",
+          "name": "Changes",
+          "type": "command",
+          "command": "git.openChange"
+        },
+        {
+          "key": "d",
+          "name": "Diff with",
+          "type": "command",
+          "command": "git.diffwithRevision"
+        },
+        {
+          "key": "D",
+          "name": "Diff with working tree",
+          "type": "command",
+          "command": "git.diffWithWorking"
+        },
+        {
+          "key": "i",
+          "name": "init",
+          "type": "command",
+          "command": "git.init"
+        },
+        {
+          "key": "m",
+          "name": "merge",
+          "type": "command",
+          "command": "git.merge"
+        },
+        {
+          "key": "s",
+          "name": "Status",
+          "type": "command",
+          "command": "workbench.view.scm"
+        },
+        {
+          "key": "S",
+          "name": "Stage",
+          "type": "command",
+          "command": "git.stag"
+        },
+        {
+      "key": "U",
+      "name": "UStage",
+      "type": "command",
+      "command": "git.ustage"
+        },
+        {
+      "key": "j",
+      "name": "Next change",
+      "type": "command",
+      "command": "workbench.action.editor.nextChange"
+        },
+        {
+      "key": "k",
+      "name": "last change",
+      "type": "command",
+      "command": "workbench.action.editor.previousChange"
+        },
+        {
+      "key": "f",
+      "name": "File history",
+      "type": "command",
+      "command": "gitlens.showQuickFileHistory"
+        },
+        {
+      "key": "g",
+      "name": "open commit graph",
+      "type": "command",
+      "command": "gitlens.showGraphPage"
+        }
+      ]
+    },
+    {
+      "key": " ",
+      "name": "Commands",
+      "type": "command",
+      "command": "workbench.action.showCommands"
+    },
+    // {
+    //   "key": "\t",
+    //   "name": "Last editor",
+    //   "type": "commands",
+    //   "commands": [
+    //     "workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup",
+    //     "list.select"
+    //   ]
+    // },
+    // {
+    //   "key": "?",
+    //   "name": "Search keybindings",
+    //   "type": "command",
+    //   "command": "whichkey.searchBindings"
+    // },
+    // {
+    //   "key": ".",
+    //   "name": "Repeat most recent action",
+    //   "type": "command",
+    //   "command": "whichkey.repeatMostRecent"
+    // },
+    // {
+    //   "key": "b",
+    //   "name": "+Buffers/Editors",
+    //   "type": "bindings",
+    //   "bindings": [
+    //     {
+    //       "key": "b",
+    //       "name": "Show all buffers/editors",
+    //       "type": "command",
+    //       "command": "workbench.action.showAllEditors"
+    //     },
+    //     {
+    //       "key": "B",
+    //       "name": "Show all buffers/editors in active group",
+    //       "type": "command",
+    //       "command": "workbench.action.showEditorsInActiveGroup"
+    //     },
+    //     {
+    //       "key": "d",
+    //       "name": "Close active editor",
+    //       "type": "command",
+    //       "command": "workbench.action.closeActiveEditor"
+    //     },
+    //     {
+    //       "key": "H",
+    //       "name": "Move editor into left group",
+    //       "type": "command",
+    //       "command": "workbench.action.moveEditorToLeftGroup"
+    //     },
+    //     {
+    //       "key": "J",
+    //       "name": "Move editor into below group",
+    //       "type": "command",
+    //       "command": "workbench.action.moveEditorToBelowGroup"
+    //     },
+    //     {
+    //       "key": "K",
+    //       "name": "Move editor into above group",
+    //       "type": "command",
+    //       "command": "workbench.action.moveEditorToAboveGroup"
+    //     },
+    //     {
+    //       "key": "L",
+    //       "name": "Move editor into right group",
+    //       "type": "command",
+    //       "command": "workbench.action.moveEditorToRightGroup"
+    //     },
+    //     {
+    //       "key": "M",
+    //       "name": "Close other editors",
+    //       "type": "command",
+    //       "command": "workbench.action.closeOtherEditors"
+    //     },
+    //     {
+    //       "key": "n",
+    //       "name": "Next editor",
+    //       "type": "command",
+    //       "command": "workbench.action.nextEditor"
+    //     },
+    //     {
+    //       "key": "p",
+    //       "name": "Previous editor",
+    //       "type": "command",
+    //       "command": "workbench.action.previousEditor"
+    //     },
+    //     {
+    //       "key": "N",
+    //       "name": "New untitled editor",
+    //       "type": "command",
+    //       "command": "workbench.action.files.newUntitledFile"
+    //     },
+    //     {
+    //       "key": "u",
+    //       "name": "Reopen closed editor",
+    //       "type": "command",
+    //       "command": "workbench.action.reopenClosedEditor"
+    //     },
+    //     {
+    //       "key": "P",
+    //       "name": "Paste clipboard to buffer",
+    //       "type": "commands",
+    //       "commands": [
+    //         "editor.action.selectAll",
+    //         "editor.action.clipboardPasteAction"
+    //       ]
+    //     },
+    //     {
+    //       "key": "Y",
+    //       "name": "Copy buffer to clipboard",
+    //       "type": "commands",
+    //       "commands": [
+    //         "editor.action.selectAll",
+    //         "editor.action.clipboardCopyAction",
+    //         "cancelSelection"
+    //       ]
+    //     }
+    //   ]
+    // },
+    // {
+    //   "key": "d",
+    //   "name": "+Debug",
+    //   "type": "bindings",
+    //   "bindings": [
+    //     {
+    //       "key": "d",
+    //       "name": "Start debug",
+    //       "type": "command",
+    //       "command": "workbench.action.debug.start"
+    //     },
+    //     {
+    //       "key": "D",
+    //       "name": "Run without debugging",
+    //       "type": "command",
+    //       "command": "workbench.action.debug.run"
+    //     },
+    //     {
+    //       "key": "S",
+    //       "name": "Stop debug",
+    //       "type": "command",
+    //       "command": "workbench.action.debug.stop"
+    //     },
+    //     {
+    //       "key": "c",
+    //       "name": "Continue debug",
+    //       "type": "command",
+    //       "command": "workbench.action.debug.continue"
+    //     },
+    //     {
+    //       "key": "p",
+    //       "name": "Pause debug",
+    //       "type": "command",
+    //       "command": "workbench.action.debug.pause"
+    //     },
+    //     {
+    //       "key": "R",
+    //       "name": "Restart debug",
+    //       "type": "command",
+    //       "command": "workbench.action.debug.restart"
+    //     },
+    //     {
+    //       "key": "i",
+    //       "name": "Step into",
+    //       "type": "command",
+    //       "command": "workbench.action.debug.stepInto"
+    //     },
+    //     {
+    //       "key": "s",
+    //       "name": "Step over",
+    //       "type": "command",
+    //       "command": "workbench.action.debug.stepOver"
+    //     },
+    //     {
+    //       "key": "o",
+    //       "name": "Step out",
+    //       "type": "command",
+    //       "command": "workbench.action.debug.stepOut"
+    //     },
+    //     {
+    //       "key": "b",
+    //       "name": "Toggle breakpoint",
+    //       "type": "command",
+    //       "command": "editor.debug.action.toggleBreakpoint"
+    //     },
+    //     {
+    //       "key": "B",
+    //       "name": "Toggle inline breakpoint",
+    //       "type": "command",
+    //       "command": "editor.debug.action.toggleInlineBreakpoint"
+    //     },
+    //     {
+    //       "key": "j",
+    //       "name": "Jump to cursor",
+    //       "type": "command",
+    //       "command": "debug.jumpToCursor"
+    //     },
+    //     {
+    //       "key": "v",
+    //       "name": "REPL",
+    //       "type": "command",
+    //       "command": "workbench.debug.action.toggleRepl"
+    //     },
+    //     {
+    //       "key": "w",
+    //       "name": "Focus on watch window",
+    //       "type": "command",
+    //       "command": "workbench.debug.action.focusWatchView"
+    //     },
+    //     {
+    //       "key": "W",
+    //       "name": "Add to watch",
+    //       "type": "command",
+    //       "command": "editor.debug.action.selectionToWatch"
+    //     }
+    //   ]
+    // },
+    // {
+    //   "key": "e",
+    //   "name": "+Errors",
+    //   "type": "bindings",
+    //   "bindings": [
+    //     {
+    //       "key": ".",
+    //       "name": "Error transient",
+    //       "type": "command",
+    //       "command": "whichkey.showTransient",
+    //       "args": "whichkey.transient.error"
+    //     },
+    //     {
+    //       "key": "l",
+    //       "name": "List errors",
+    //       "type": "command",
+    //       "command": "workbench.actions.view.problems"
+    //     },
+    //     {
+    //       "key": "N",
+    //       "name": "Previous error",
+    //       "type": "command",
+    //       "command": "editor.action.marker.prev"
+    //     },
+    //     {
+    //       "key": "n",
+    //       "name": "Next error",
+    //       "type": "command",
+    //       "command": "editor.action.marker.next"
+    //     },
+    //     {
+    //       "key": "p",
+    //       "name": "Previous error",
+    //       "type": "command",
+    //       "command": "editor.action.marker.prev"
+    //     }
+    //   ]
+    // },
+    // {
+    //   "key": "f",
+    //   "name": "+File",
+    //   "type": "bindings",
+    //   "bindings": [
+    //     {
+    //       "key": "f",
+    //       "name": "Open file/folder",
+    //       "type": "command",
+    //       "command": "whichkey.openFile"
+    //     },
+    //     {
+    //       "key": "n",
+    //       "name": "New Untitled",
+    //       "type": "command",
+    //       "command": "workbench.action.files.newUntitledFile"
+    //     },
+    //     {
+    //       "key": "w",
+    //       "name": "Open active in new window",
+    //       "type": "command",
+    //       "command": "workbench.action.files.showOpenedFileInNewWindow"
+    //     },
+    //     {
+    //       "key": "s",
+    //       "name": "Save file",
+    //       "type": "command",
+    //       "command": "workbench.action.files.save"
+    //     },
+    //     {
+    //       "key": "S",
+    //       "name": "Save all files",
+    //       "type": "command",
+    //       "command": "workbench.action.files.saveAll"
+    //     },
+    //     {
+    //       "key": "r",
+    //       "name": "Open recent",
+    //       "type": "command",
+    //       "command": "workbench.action.openRecent"
+    //     },
+    //     {
+    //       "key": "R",
+    //       "name": "Rename file",
+    //       "type": "commands",
+    //       "commands": [
+    //         "workbench.files.action.showActiveFileInExplorer",
+    //         "renameFile"
+    //       ]
+    //     },
+    //     {
+    //       "key": "t",
+    //       "name": "Show tree/explorer view",
+    //       "type": "command",
+    //       "command": "workbench.view.explorer"
+    //     },
+    //     {
+    //       "key": "T",
+    //       "name": "Show active file in tree/explorer view",
+    //       "type": "command",
+    //       "command": "workbench.files.action.showActiveFileInExplorer"
+    //     },
+    //     {
+    //       "key": "y",
+    //       "name": "Copy path of active file",
+    //       "type": "command",
+    //       "command": "workbench.action.files.copyPathOfActiveFile"
+    //     },
+    //     {
+    //       "key": "o",
+    //       "name": "Open with",
+    //       "type": "command",
+    //       "command": "explorer.openWith"
+    //     },
+    //     {
+    //       "key": "l",
+    //       "name": "Change file language",
+    //       "type": "command",
+    //       "command": "workbench.action.editor.changeLanguageMode"
+    //     },
+    //     {
+    //       "key": "=",
+    //       "name": "Format file",
+    //       "type": "command",
+    //       "command": "editor.action.formatDocument"
+    //     },
+    //     {
+    //       "key": "i",
+    //       "name": "+Indentation",
+    //       "type": "bindings",
+    //       "bindings": [
+    //         {
+    //           "key": "i",
+    //           "name": "Change indentation",
+    //           "type": "command",
+    //           "command": "changeEditorIndentation"
+    //         },
+    //         {
+    //           "key": "d",
+    //           "name": "Detect indentation",
+    //           "type": "command",
+    //           "command": "editor.action.detectIndentation"
+    //         },
+    //         {
+    //           "key": "r",
+    //           "name": "Reindent",
+    //           "type": "command",
+    //           "command": "editor.action.reindentlines"
+    //         },
+    //         {
+    //           "key": "R",
+    //           "name": "Reindent selected",
+    //           "type": "command",
+    //           "command": "editor.action.reindentselectedlines"
+    //         },
+    //         {
+    //           "key": "t",
+    //           "name": "Convert indentation to tabs",
+    //           "type": "command",
+    //           "command": "editor.action.indentationToTabs"
+    //         },
+    //         {
+    //           "key": "s",
+    //           "name": "Convert indentation to spaces",
+    //           "type": "command",
+    //           "command": "editor.action.indentationToSpaces"
+    //         }
+    //       ]
+    //     }
+    //   ]
+    // },
+    // {
+    //   "key": "g",
+    //   "name": "+Git",
+    //   "type": "bindings",
+    //   "bindings": [
+    //     {
+    //       "key": "b",
+    //       "name": "Checkout",
+    //       "type": "command",
+    //       "command": "git.checkout"
+    //     },
+    //     {
+    //       "key": "c",
+    //       "name": "Commit",
+    //       "type": "command",
+    //       "command": "git.commit"
+    //     },
+    //     {
+    //       "key": "d",
+    //       "name": "Delete Branch",
+    //       "type": "command",
+    //       "command": "git.deleteBranch"
+    //     },
+    //     {
+    //       "key": "f",
+    //       "name": "Fetch",
+    //       "type": "command",
+    //       "command": "git.fetch"
+    //     },
+    //     {
+    //       "key": "i",
+    //       "name": "Init",
+    //       "type": "command",
+    //       "command": "git.init"
+    //     },
+    //     {
+    //       "key": "m",
+    //       "name": "Merge",
+    //       "type": "command",
+    //       "command": "git.merge"
+    //     },
+    //     {
+    //       "key": "p",
+    //       "name": "Publish",
+    //       "type": "command",
+    //       "command": "git.publish"
+    //     },
+    //     {
+    //       "key": "s",
+    //       "name": "Status",
+    //       "type": "command",
+    //       "command": "workbench.view.scm"
+    //     },
+    //     {
+    //       "key": "S",
+    //       "name": "Stage",
+    //       "type": "command",
+    //       "command": "git.stage"
+    //     },
+    //     {
+    //       "key": "U",
+    //       "name": "Unstage",
+    //       "type": "command",
+    //       "command": "git.unstage"
+    //     }
+    //   ]
+    // },
+    // {
+    //   "key": "i",
+    //   "name": "+Insert",
+    //   "type": "bindings",
+    //   "bindings": [
+    //     {
+    //       "key": "j",
+    //       "name": "Insert line below",
+    //       "type": "command",
+    //       "command": "editor.action.insertLineAfter"
+    //     },
+    //     {
+    //       "key": "k",
+    //       "name": "Insert line above",
+    //       "type": "command",
+    //       "command": "editor.action.insertLineBefore"
+    //     },
+    //     {
+    //       "key": "s",
+    //       "name": "Insert snippet",
+    //       "type": "command",
+    //       "command": "editor.action.insertSnippet"
+    //     }
+    //   ]
+    // },
+    // {
+    //   "key": "p",
+    //   "name": "+Project",
+    //   "type": "bindings",
+    //   "bindings": [
+    //     {
+    //       "key": "f",
+    //       "name": "Find file in project",
+    //       "type": "command",
+    //       "command": "workbench.action.quickOpen"
+    //     },
+    //     {
+    //       "key": "p",
+    //       "name": "Switch project",
+    //       "type": "command",
+    //       "command": "workbench.action.openRecent"
+    //     },
+    //     {
+    //       "key": "t",
+    //       "name": "Show tree/explorer view",
+    //       "type": "command",
+    //       "command": "workbench.view.explorer"
+    //     }
+    //   ]
+    // },
+    // {
+    //   "key": "r",
+    //   "name": "+Repeat",
+    //   "type": "bindings",
+    //   "bindings": [
+    //     {
+    //       "key": ".",
+    //       "name": "Repeat recent actions",
+    //       "type": "command",
+    //       "command": "whichkey.repeatRecent"
+    //     }
+    //   ]
+    // },
+    // {
+    //   "key": "s",
+    //   "name": "+Search/Symbol",
+    //   "type": "bindings",
+    //   "bindings": [
+    //     {
+    //       "key": "e",
+    //       "name": "Edit symbol",
+    //       "type": "command",
+    //       "command": "editor.action.rename"
+    //     },
+    //     {
+    //       "key": "h",
+    //       "name": "Highlight symbol transient",
+    //       "type": "commands",
+    //       "commands": [
+    //         "editor.action.wordHighlight.trigger",
+    //         "whichkey.showTransient"
+    //       ],
+    //       "args": [null, "whichkey.transient.symbol"]
+    //     },
+    //     {
+    //       "key": "j",
+    //       "name": "Jump to symbol in file",
+    //       "type": "command",
+    //       "command": "workbench.action.gotoSymbol"
+    //     },
+    //     {
+    //       "key": "J",
+    //       "name": "Jump to symbol in workspace",
+    //       "type": "command",
+    //       "command": "workbench.action.showAllSymbols"
+    //     },
+    //     {
+    //       "key": "p",
+    //       "name": "Search in a project",
+    //       "type": "command",
+    //       "command": "workbench.action.findInFiles"
+    //     },
+    //     {
+    //       "key": "P",
+    //       "name": "Search in a project with a selection",
+    //       "type": "commands",
+    //       "commands": [
+    //         "editor.action.addSelectionToNextFindMatch",
+    //         "workbench.action.findInFiles"
+    //       ]
+    //     },
+    //     {
+    //       "key": "r",
+    //       "name": "Search all references",
+    //       "type": "command",
+    //       "command": "editor.action.referenceSearch.trigger"
+    //     },
+    //     {
+    //       "key": "R",
+    //       "name": "Search all references in side bar",
+    //       "type": "command",
+    //       "command": "references-view.find"
+    //     },
+    //     {
+    //       "key": "s",
+    //       "name": "Search in current file",
+    //       "type": "command",
+    //       "command": "actions.find"
+    //     }
+    //   ]
+    // },
+    // {
+    //   "key": "S",
+    //   "name": "+Show",
+    //   "type": "bindings",
+    //   "bindings": [
+    //     {
+    //       "key": "e",
+    //       "name": "Show explorer",
+    //       "type": "command",
+    //       "command": "workbench.view.explorer"
+    //     },
+    //     {
+    //       "key": "s",
+    //       "name": "Show search",
+    //       "type": "command",
+    //       "command": "workbench.view.search"
+    //     },
+    //     {
+    //       "key": "g",
+    //       "name": "Show source control",
+    //       "type": "command",
+    //       "command": "workbench.view.scm"
+    //     },
+    //     {
+    //       "key": "t",
+    //       "name": "Show test",
+    //       "type": "command",
+    //       "command": "workbench.view.extension.test"
+    //     },
+    //     {
+    //       "key": "r",
+    //       "name": "Show remote explorer",
+    //       "type": "command",
+    //       "command": "workbench.view.remote"
+    //     },
+    //     {
+    //       "key": "x",
+    //       "name": "Show extensions",
+    //       "type": "command",
+    //       "command": "workbench.view.extensions"
+    //     },
+    //     {
+    //       "key": "p",
+    //       "name": "Show problem",
+    //       "type": "command",
+    //       "command": "workbench.actions.view.problems"
+    //     },
+    //     {
+    //       "key": "o",
+    //       "name": "Show output",
+    //       "type": "command",
+    //       "command": "workbench.action.output.toggleOutput"
+    //     },
+    //     {
+    //       "key": "d",
+    //       "name": "Show debug console",
+    //       "type": "command",
+    //       "command": "workbench.debug.action.toggleRepl"
+    //     }
+    //   ]
+    // },
+    // {
+    //   "key": "t",
+    //   "name": "+Toggles",
+    //   "type": "bindings",
+    //   "bindings": [
+    //     {
+    //       "key": "c",
+    //       "name": "Toggle find case sensitive",
+    //       "type": "command",
+    //       "command": "toggleFindCaseSensitive"
+    //     },
+    //     {
+    //       "key": "w",
+    //       "name": "Toggle ignore trim whitespace in diff",
+    //       "type": "command",
+    //       "command": "toggle.diff.ignoreTrimWhitespace"
+    //     },
+    //     {
+    //       "key": "W",
+    //       "name": "Toggle word wrap",
+    //       "type": "command",
+    //       "command": "editor.action.toggleWordWrap"
+    //     }
+    //   ]
+    // },
+    // {
+    //   "key": "T",
+    //   "name": "+UI toggles",
+    //   "type": "bindings",
+    //   "bindings": [
+    //     {
+    //       "key": "b",
+    //       "name": "Toggle side bar visibility",
+    //       "type": "command",
+    //       "command": "workbench.action.toggleSidebarVisibility"
+    //     },
+    //     {
+    //       "key": "j",
+    //       "name": "Toggle panel visibility",
+    //       "type": "command",
+    //       "command": "workbench.action.togglePanel"
+    //     },
+    //     {
+    //       "key": "F",
+    //       "name": "Toggle full screen",
+    //       "type": "command",
+    //       "command": "workbench.action.toggleFullScreen"
+    //     },
+    //     {
+    //       "key": "s",
+    //       "name": "Select theme",
+    //       "type": "command",
+    //       "command": "workbench.action.selectTheme"
+    //     },
+    //     {
+    //       "key": "m",
+    //       "name": "Toggle maximized panel",
+    //       "type": "command",
+    //       "command": "workbench.action.toggleMaximizedPanel"
+    //     },
+    //     {
+    //       "key": "t",
+    //       "name": "Toggle tool/activity bar visibility",
+    //       "type": "command",
+    //       "command": "workbench.action.toggleActivityBarVisibility"
+    //     },
+    //     {
+    //       "key": "T",
+    //       "name": "Toggle tab visibility",
+    //       "type": "command",
+    //       "command": "workbench.action.toggleTabsVisibility"
+    //     },
+    //     {
+    //       "key": "z",
+    //       "name": "Toggle zen mode",
+    //       "type": "command",
+    //       "command": "workbench.action.toggleZenMode"
+    //     }
+    //   ]
+    // },
+    // {
+    //   "key": "w",
+    //   "name": "+Window",
+    //   "type": "bindings",
+    //   "bindings": [
+    //     {
+    //       "key": "W",
+    //       "name": "Focus previous editor group",
+    //       "type": "command",
+    //       "command": "workbench.action.focusPreviousGroup"
+    //     },
+    //     {
+    //       "key": "-",
+    //       "name": "Split editor below",
+    //       "type": "command",
+    //       "command": "workbench.action.splitEditorDown"
+    //     },
+    //     {
+    //       "key": "/",
+    //       "name": "Split editor right",
+    //       "type": "command",
+    //       "command": "workbench.action.splitEditor"
+    //     },
+    //     {
+    //       "key": "s",
+    //       "name": "Split editor below",
+    //       "type": "command",
+    //       "command": "workbench.action.splitEditorDown"
+    //     },
+    //     {
+    //       "key": "v",
+    //       "name": "Split editor right",
+    //       "type": "command",
+    //       "command": "workbench.action.splitEditor"
+    //     },
+    //     {
+    //       "key": "h",
+    //       "name": "Move editor left",
+    //       "type": "command",
+    //       "command": "workbench.action.focusPreviousGroup"
+    //     },
+    //     {
+    //       "key": "j",
+    //       "name": "Move editor down",
+    //       "type": "command",
+    //       "command": "workbench.action.focusBelowGroup"
+    //     },
+    //     {
+    //       "key": "k",
+    //       "name": "Move editor up",
+    //       "type": "command",
+    //       "command": "workbench.action.focusAboveGroup"
+    //     },
+    //     {
+    //       "key": "l",
+    //       "name": "Move editor right",
+    //       "type": "command",
+    //       "command": "workbench.action.focusNextGroup"
+    //     },
+    //     {
+    //       "key": "H",
+    //       "name": "Move editor group left",
+    //       "type": "command",
+    //       "command": "workbench.action.moveActiveEditorGroupLeft"
+    //     },
+    //     {
+    //       "key": "J",
+    //       "name": "Move editor group down",
+    //       "type": "command",
+    //       "command": "workbench.action.moveActiveEditorGroupDown"
+    //     },
+    //     {
+    //       "key": "K",
+    //       "name": "Move editor group up",
+    //       "type": "command",
+    //       "command": "workbench.action.moveActiveEditorGroupUp"
+    //     },
+    //     {
+    //       "key": "L",
+    //       "name": "Move editor group right",
+    //       "type": "command",
+    //       "command": "workbench.action.moveActiveEditorGroupRight"
+    //     },
+    //     {
+    //       "key": "t",
+    //       "name": "Toggle editor group sizes",
+    //       "type": "command",
+    //       "command": "workbench.action.toggleEditorWidths"
+    //     },
+    //     {
+    //       "key": "m",
+    //       "name": "Maximize editor group",
+    //       "type": "command",
+    //       "command": "workbench.action.minimizeOtherEditors"
+    //     },
+    //     {
+    //       "key": "M",
+    //       "name": "Maximize editor group and hide side bar",
+    //       "type": "command",
+    //       "command": "workbench.action.maximizeEditor"
+    //     },
+    //     {
+    //       "key": "=",
+    //       "name": "Reset editor group sizes",
+    //       "type": "command",
+    //       "command": "workbench.action.evenEditorWidths"
+    //     },
+    //     {
+    //       "key": "z",
+    //       "name": "Combine all editors",
+    //       "type": "command",
+    //       "command": "workbench.action.joinAllGroups"
+    //     },
+    //     {
+    //       "key": "d",
+    //       "name": "Close editor group",
+    //       "type": "command",
+    //       "command": "workbench.action.closeEditorsInGroup"
+    //     },
+    //     {
+    //       "key": "x",
+    //       "name": "Close all editor groups",
+    //       "type": "command",
+    //       "command": "workbench.action.closeAllGroups"
+    //     }
+    //   ]
+    // },
+    // {
+    //   "key": "x",
+    //   "name": "+Text",
+    //   "type": "bindings",
+    //   "bindings": [
+    //     {
+    //       "key": "i",
+    //       "name": "Organize Imports",
+    //       "type": "command",
+    //       "command": "editor.action.organizeImports"
+    //     },
+    //     {
+    //       "key": "r",
+    //       "name": "Rename symbol",
+    //       "type": "command",
+    //       "command": "editor.action.rename"
+    //     },
+    //     {
+    //       "key": "R",
+    //       "name": "Refactor",
+    //       "type": "command",
+    //       "command": "editor.action.refactor"
+    //     },
+    //     {
+    //       "key": ".",
+    //       "name": "Quick fix",
+    //       "type": "command",
+    //       "command": "editor.action.quickFix"
+    //     },
+    //     {
+    //       "key": "a",
+    //       "name": "Find all references",
+    //       "type": "command",
+    //       "command": "editor.action.referenceSearch.trigger"
+    //     },
+    //     {
+    //       "key": "u",
+    //       "name": "To lower case",
+    //       "type": "command",
+    //       "command": "editor.action.transformToLowercase"
+    //     },
+    //     {
+    //       "key": "U",
+    //       "name": "To upper case",
+    //       "type": "command",
+    //       "command": "editor.action.transformToUppercase"
+    //     },
+    //     {
+    //       "key": "J",
+    //       "name": "Move lines down transient",
+    //       "type": "commands",
+    //       "commands": [
+    //         "editor.action.moveLinesDownAction",
+    //         "whichkey.showTransient"
+    //       ],
+    //       "args": [null, "whichkey.transient.lineMoving"]
+    //     },
+    //     {
+    //       "key": "K",
+    //       "name": "Move lines up transient",
+    //       "type": "commands",
+    //       "commands": [
+    //         "editor.action.moveLinesUpAction",
+    //         "whichkey.showTransient"
+    //       ],
+    //       "args": [null, "whichkey.transient.lineMoving"]
+    //     },
+    //     {
+    //       "key": "l",
+    //       "name": "+Lines",
+    //       "type": "bindings",
+    //       "bindings": [
+    //         {
+    //           "key": "s",
+    //           "name": "Sort lines in ascending order",
+    //           "type": "command",
+    //           "command": "editor.action.sortLinesAscending"
+    //         },
+    //         {
+    //           "key": "S",
+    //           "name": "Sort lines in descending order",
+    //           "type": "command",
+    //           "command": "editor.action.sortLinesDescending"
+    //         },
+    //         {
+    //           "key": "d",
+    //           "name": "Duplicate lines down",
+    //           "type": "command",
+    //           "command": "editor.action.copyLinesDownAction"
+    //         },
+    //         {
+    //           "key": "D",
+    //           "name": "Duplicate lines up",
+    //           "type": "command",
+    //           "command": "editor.action.copyLinesUpAction"
+    //         }
+    //       ]
+    //     },
+    //     {
+    //       "key": "d",
+    //       "name": "+Delete",
+    //       "type": "bindings",
+    //       "bindings": [
+    //         {
+    //           "key": "w",
+    //           "name": "Delete trailing whitespace",
+    //           "type": "command",
+    //           "command": "editor.action.trimTrailingWhitespace"
+    //         }
+    //       ]
+    //     },
+    //     {
+    //       "key": "m",
+    //       "name": "+Merge conflict",
+    //       "type": "bindings",
+    //       "bindings": [
+    //         {
+    //           "key": "b",
+    //           "name": "Accept both",
+    //           "type": "command",
+    //           "command": "merge-conflict.accept.both"
+    //         },
+    //         {
+    //           "key": "c",
+    //           "name": "Accept current",
+    //           "type": "command",
+    //           "command": "merge-conflict.accept.current"
+    //         },
+    //         {
+    //           "key": "i",
+    //           "name": "Accept incoming",
+    //           "type": "command",
+    //           "command": "merge-conflict.accept.incoming"
+    //         },
+    //         {
+    //           "key": "B",
+    //           "name": "Accept all both",
+    //           "type": "command",
+    //           "command": "merge-conflict.accept.all-both"
+    //         },
+    //         {
+    //           "key": "C",
+    //           "name": "Accept all current",
+    //           "type": "command",
+    //           "command": "merge-conflict.accept.all-current"
+    //         },
+    //         {
+    //           "key": "I",
+    //           "name": "Accept all incoming",
+    //           "type": "command",
+    //           "command": "merge-conflict.accept.all-incoming"
+    //         },
+    //         {
+    //           "key": "s",
+    //           "name": "Accept selection",
+    //           "type": "command",
+    //           "command": "merge-conflict.accept.selection"
+    //         },
+    //         {
+    //           "key": "k",
+    //           "name": "Compare current conflict",
+    //           "type": "command",
+    //           "command": "merge-conflict.compare"
+    //         },
+    //         {
+    //           "key": "n",
+    //           "name": "Next Conflict",
+    //           "type": "command",
+    //           "command": "merge-conflict.next"
+    //         },
+    //         {
+    //           "key": "N",
+    //           "name": "Previous Conflict",
+    //           "type": "command",
+    //           "command": "merge-conflict.previous"
+    //         }
+    //       ]
+    //     }
+    //   ]
+    // },
+    // {
+    //   "key": "z",
+    //   "name": "+Zoom/Fold",
+    //   "type": "bindings",
+    //   "bindings": [
+    //     {
+    //       "key": ".",
+    //       "name": "+Fold",
+    //       "type": "bindings",
+    //       "bindings": [
+    //         {
+    //           "key": "a",
+    //           "name": "Toggle: around a point",
+    //           "type": "command",
+    //           "command": "editor.toggleFold"
+    //         },
+    //         {
+    //           "key": "c",
+    //           "name": "Close: at a point",
+    //           "type": "command",
+    //           "command": "editor.fold"
+    //         },
+    //         {
+    //           "key": "b",
+    //           "name": "Close: all block comments",
+    //           "type": "command",
+    //           "command": "editor.foldAllBlockComments"
+    //         },
+    //         {
+    //           "key": "g",
+    //           "name": "Close: all regions",
+    //           "type": "command",
+    //           "command": "editor.foldAllMarkerRegions"
+    //         },
+    //         {
+    //           "key": "m",
+    //           "name": "Close: all",
+    //           "type": "command",
+    //           "command": "editor.foldAll"
+    //         },
+    //         {
+    //           "key": "o",
+    //           "name": "Open: at a point",
+    //           "type": "command",
+    //           "command": "editor.unfold"
+    //         },
+    //         {
+    //           "key": "O",
+    //           "name": "Open: recursively",
+    //           "type": "command",
+    //           "command": "editor.unfoldRecursively"
+    //         },
+    //         {
+    //           "key": "G",
+    //           "name": "Open: all regions",
+    //           "type": "command",
+    //           "command": "editor.unfoldAllMarkerRegions"
+    //         },
+    //         {
+    //           "key": "r",
+    //           "name": "Open: all",
+    //           "type": "command",
+    //           "command": "editor.unfoldAll"
+    //         }
+    //       ]
+    //     },
+    //     {
+    //       "key": "f",
+    //       "name": "Frame zooming transient",
+    //       "type": "command",
+    //       "command": "whichkey.showTransient",
+    //       "args": "whichkey.transient.frameZooming"
+    //     },
+    //     {
+    //       "key": "x",
+    //       "name": "Font zooming transient",
+    //       "type": "command",
+    //       "command": "whichkey.showTransient",
+    //       "args": "whichkey.transient.fontZooming"
+    //     },
+    //     {
+    //       "key": "i",
+    //       "name": "Image zooming transient",
+    //       "type": "command",
+    //       "command": "whichkey.showTransient",
+    //       "args": "whichkey.transient.imageZooming"
+    //     }
+    //   ]
+    // },
+    // {
+    //   "key": "!",
+    //   "name": "Show terminal",
+    //   "type": "command",
+    //   "command": "workbench.action.terminal.focus"
+    // },
+    // {
+    //   "key": "/",
+    //   "name": "Search in a project",
+    //   "type": "command",
+    //   "command": "workbench.action.findInFiles"
+    // },
+    // {
+    //   "key": "*",
+    //   "name": "Search in a project with a selection",
+    //   "type": "commands",
+    //   "commands": [
+    //     "editor.action.addSelectionToNextFindMatch",
+    //     "workbench.action.findInFiles"
+    //   ]
+    // },
+    // {
+    //   "key": "v",
+    //   "name": "Smart select/expand region transient",
+    //   "type": "commands",
+    //   "commands": ["editor.action.smartSelect.grow", "whichkey.showTransient"],
+    //   "args": [null, "whichkey.transient.smartExpand"]
+    // },
+    // {
+    //   "key": "1",
+    //   "name": "Focus 1st editor group",
+    //   "type": "command",
+    //   "command": "workbench.action.focusFirstEditorGroup"
+    // },
+    // {
+    //   "key": "2",
+    //   "name": "Focus 2nd editor group",
+    //   "type": "command",
+    //   "command": "workbench.action.focusSecondEditorGroup"
+    // },
+    // {
+    //   "key": "3",
+    //   "name": "Focus 3rd editor group",
+    //   "type": "command",
+    //   "command": "workbench.action.focusThirdEditorGroup"
+    // },
+    // {
+    //   "key": "4",
+    //   "name": "Focus 4th editor group",
+    //   "type": "command",
+    //   "command": "workbench.action.focusFourthEditorGroup"
+    // },
+    // {
+    //   "key": "5",
+    //   "name": "Focus 5th editor group",
+    //   "type": "command",
+    //   "command": "workbench.action.focusFifthEditorGroup"
+    // },
+    // {
+    //   "key": "6",
+    //   "name": "Focus 6th editor group",
+    //   "type": "command",
+    //   "command": "workbench.action.focusSixthEditorGroup"
+    // },
+    // {
+    //   "key": "7",
+    //   "name": "Focus 7th editor group",
+    //   "type": "command",
+    //   "command": "workbench.action.focusSeventhEditorGroup"
+    // },
+    // {
+    //   "key": "8",
+    //   "name": "Focus 8th editor group",
+    //   "type": "command",
+    //   "command": "workbench.action.focusEighthEditorGroup"
+    // }
+  ],
+
+  "remote.SSH.remotePlatform": {
+    "192.168.1.9": "linux",
+    "192.168.193.212": "linux"
+  },
+  "cSpell.userWords": ["clangd", "cweijan", "tabnine", "wuby"],
+  "settingsSync.ignoredExtensions": [
+    "mcu-debug.rtos-views",
+    "marus25.cortex-debug"
+	],
+    "workbench.sideBar.location": "right"
+}
