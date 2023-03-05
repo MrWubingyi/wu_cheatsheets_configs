@@ -1,18 +1,5 @@
 // // 将键绑定放在此文件中以覆盖默认值
 [
-  //     // 使用ctrl移动到窗口
-  //   {
-  //     "key": "ctrl+h",
-  //     "command": "workbench.action.navigateLeft"
-  //   },
-  //   {
-  //     "key": "ctrl+l",
-  //     "command": "workbench.action.navigateRight"
-  //   },
-  //   {
-  //     "key": "ctrl+k",
-  //     "command": "workbench.action.navigateUp"
-  //   },
   // 以下是 vim 绑定的键位
   // 当光标在编辑器中聚焦时，显示和隐藏底部的 panel
   {
@@ -26,16 +13,16 @@
     "command": "selectNextSuggestion",
     "when": "vim.active && suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
   },
+  {
+    "key": "ctrl+k",
+    "command": "selectPrevSuggestion",
+    "when": "vim.active && suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
+  },
   // 在 quickOpen 的对话框中上下跳转
   {
     "key": "ctrl+j",
     "command": "workbench.action.quickOpenSelectNext",
     "when": "vim.active && inQuickOpen"
-  },
-  {
-    "key": "ctrl+k",
-    "command": "selectPrevSuggestion",
-    "when": "vim.active && suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
   },
   {
     "key": "ctrl+k",
@@ -97,18 +84,28 @@
     "command": "deleteFile",
     "when": "explorerViewletVisible && filesExplorerFocus && !explorerResourceIsRoot && !explorerResourceReadonly && !inputFocus"
   },
-  // 在不同的 terminal 之间进行跳转
+//   // 在不同的 terminal 之间进行跳转
+//   {
+//     "key": "ctrl+shift+alt+j",
+//     "command": "workbench.action.terminal.focusNext",
+//     "when": "terminalFocus && terminalHasBeenCreated && !terminalEditorFocus || terminalFocus && terminalProcessSupported && !terminalEditorFocus"
+//   },
+//   {
+//     "key": "ctrl+shift+alt+k",
+//     "command": "workbench.action.terminal.focusPrevious",
+//     "when": "terminalFocus && terminalHasBeenCreated && !terminalEditorFocus || terminalFocus && terminalProcessSupported && !terminalEditorFocus"
+//   },
+   // 在不同的 terminal 之间进行跳转
   {
-    "key": "ctrl+shift+alt+j",
+    "key": "ctrl+h",
     "command": "workbench.action.terminal.focusNext",
     "when": "terminalFocus && terminalHasBeenCreated && !terminalEditorFocus || terminalFocus && terminalProcessSupported && !terminalEditorFocus"
   },
   {
-    "key": "ctrl+shift+alt+k",
+    "key": "ctrl+l",
     "command": "workbench.action.terminal.focusPrevious",
     "when": "terminalFocus && terminalHasBeenCreated && !terminalEditorFocus || terminalFocus && terminalProcessSupported && !terminalEditorFocus"
-  },
-  // codeAction 上下选择
+  }, // codeAction 上下选择
   {
     "key": "j",
     "command": "selectNextCodeAction",

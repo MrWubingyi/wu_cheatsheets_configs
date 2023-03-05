@@ -4,6 +4,19 @@
   // 编辑器设置
   // 界面主题
   "workbench.colorTheme": "Hazel Flow Dark",
+//   设置侧边栏在右
+      "workbench.sideBar.location": "right",
+    //  设置毛玻璃效果
+    "workbench.colorCustomizations": {
+        "statusBar.background": "#8FBCBB",
+        "statusBar.noFolderBackground": "#8FBCBB",
+        "statusBar.debuggingBackground": "#8FBCBB",
+        "statusBar.foreground": "#434C5E",
+        "statusBar.debuggingForeground": "#434C5E"
+    },
+    "vscode_vibrancy.opacity": 0.3,
+    "vscode_vibrancy.theme": "Dark (Only Subbar)",
+
   // 是否要确认是否信任新打开的文件
   "security.workspace.trust.untrustedFiles": "open",
   // 编辑器设置在保存时自动格式化
@@ -222,9 +235,12 @@
   // 绑定vim前导键
   "vim.leader": "<space>",
   // 启用easymotion插件
-  "vim.easymotion": true,
+  "vim.easymotion": false,
+  // vim 的 easymotion 插件的高亮字符的前景色
+  "vim.easymotionMarkerForegroundColorOneChar": "#DF5452",
   // 开启 vim-surround
   "vim.surround": true,
+  // 开启vim.sneaker
   "vim.sneak": true,
   // 启用系统粘贴板作为vim寄存器
   "vim.useSystemClipboard": true,
@@ -237,6 +253,19 @@
   "vim.autoSwitchInputMethod.defaultIM": "1033",
   "vim.autoSwitchInputMethod.obtainIMCmd": "C:\\im-select.exe",
   "vim.autoSwitchInputMethod.switchIMCmd": "C:\\im-select.exe {im}",
+  // 根据当前模式更改状态栏的颜色
+      "vim.statusBarColorControl": true,
+    "vim.statusBarColors.normal": ["#8FBCBB", "#434C5E"],
+    "vim.statusBarColors.insert": "#BF616A",
+    "vim.statusBarColors.visual": "#B48EAD",
+    "vim.statusBarColors.visualline": "#B48EAD",
+    "vim.statusBarColors.visualblock": "#A3BE8C",
+    "vim.statusBarColors.replace": "#D08770",
+    "vim.statusBarColors.commandlineinprogress": "#007ACC",
+    "vim.statusBarColors.searchinprogressmode": "#007ACC",
+    "vim.statusBarColors.easymotionmode": "#007ACC",
+    "vim.statusBarColors.easymotioninputmode": "#007ACC",
+    "vim.statusBarColors.surroundinputmode": "#007ACC",
   // 当输入一个搜索字符时，显示下一个匹配的结果
   "vim.incsearch": true,
   // 下面定义的按键将交由vscode进行处理，而不是vscode-vim插件
@@ -248,7 +277,7 @@
   "vim.normalModeKeyBindings": [
     // whichkey
     {
-      "before": ["<leader>"],
+      "before": ["<leader>","<leader>","<leader>"],
       "commands": ["whichkey.show"]
     },
     {
@@ -285,6 +314,10 @@
     {
       "before": ["L"],
       "after": ["$"]
+    },
+    {
+      "before": ["{"],
+      "after": ["w"]
     },
     // 摺叠代碼塊
     {
@@ -407,6 +440,15 @@
           "command": "editor.action.transformToUppercase"
         }
       ]
+    },
+    {
+    "before" : ["<leader>","t"],
+    "commands":[
+        {
+        "command": "extension.翻译选中文本"
+        }
+        // "when": "editorTextFocus
+    ]
     }
   ],
   // vim 在 normal 模式下非递归的键位绑定
@@ -448,12 +490,10 @@
     },
     // whichkey
     {
-      "before": ["<leader>"],
+      "before": ["<leader>","<leader>","<leader>",],
       "commands": ["whichkey.show"]
     }
   ],
-  // vim 的 easymotion 插件的高亮字符的前景色
-  "vim.easymotionMarkerForegroundColorOneChar": "#DF5452",
   // markdown预览模式设置
   "markdown.preview.scrollEditorWithPreview": false,
   "[jsonc]": {
@@ -1793,6 +1833,9 @@
   "settingsSync.ignoredExtensions": [
     "mcu-debug.rtos-views",
     "marus25.cortex-debug"
-	],
-    "workbench.sideBar.location": "right"
+    ],
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
+    "files.autoSave": "onFocusChange",
+    "vscode_vibrancy.type": "acrylic",
+
 }
