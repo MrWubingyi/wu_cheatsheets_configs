@@ -1,25 +1,25 @@
 # TMUX CHEATSHEET (中文速查表)  -  by wuby
+
 ## Version: 1, Last Modified: 2018/03/15 00:30
+
 ## copy on https://github.com/skywind3000/awesome-cheatsheets
 
+# 操作方式
 
-
-# 操作方式 
 ```
 <prefix> + key            # <prefix> 默认为 ctrl + b
 <prefix> + c              # 表示先按 ctrl + b 再按 c 键
 ```
 
-
 # globals
+
 ```
 <prefix> + r     #刷新配置文件
 <prefix> + ?              # 查看所有的 key map
 ```
 
-
-
 # session
+
 ```
 tmux                      # 创建新的 session
 tmux new -s name          # 创建新的 session 并指定一个name
@@ -31,7 +31,8 @@ tmux kill-ses -a          # kill 所有 session, 除了当前的 session
 tmux kill-ses -a -t myses # kill 所有 session, 除了 myses
 ```
 
-# window 操作 
+# window 操作
+
 ```
 <prefix> + c              # 新建一个 window
 <prefix> + n              # 下一个 window
@@ -43,10 +44,12 @@ tmux kill-ses -a -t myses # kill 所有 session, 除了 myses
 <prefix> + ,              # 重命名 window 
 <prefix> + .              # 移动 window 
 <prefix> + x                                # 关闭当前 window
-Alt = 3                   # 新建并弹出popup窗口
+Alt + 3                   # 新建并弹出popup窗口
 pp                        # 新建并弹出临时popup窗口,用esc退出
 ```
-# pane 操作 
+
+# pane 操作
+
 ```
 <prefix> + %              <prefix> + \          # 横向分裂 
 <prefix> + "              <prefix> + -          # 纵向分裂 
@@ -63,7 +66,8 @@ pp                        # 新建并弹出临时popup窗口,用esc退出
 <prefix> + <Space>                          # 改变 pane 的布局 
 ```
 
-# session 
+# session
+
 ```
 <prefix> + d              # detach 整个session, 后续可以重新连接
 <prefix> + s              # 列出 session
@@ -72,25 +76,30 @@ pp                        # 新建并弹出临时popup窗口,用esc退出
 <prefix> + )              # 跳到下一个 seesion 
 ```
 
-# Misc 
+# Misc
+
 ```
 <prefix> + t              # 显示时钟 
 <prefix> + :              # 命令行 
 ```
+
 # pane 同步
+
 ```
 :setw synchronize-panes  # 打开(关闭) pane 同步模式, 发送命令到所有的 pane 中
                          # 只影响当前 window 的 pane
 ```
-# 复制模式 (copy-mode) 
+
+# 复制模式 (copy-mode)
+
 ```
 # 添加下面一行到 $HOME/.tmux.conf, 通过 vim 的快捷键实现浏览, 复制等操作;
 
 setw -g mode-keys vi 
 ```
 
+更多 vim 快捷键可参考 ../editors/vim.txt, 以下列出一些常用快捷键.
 
-更多 vim 快捷键可参考 ../editors/vim.txt, 以下列出一些常用快捷键. 
 ```
 <prefix> + [              # 进入 copy mode 
 
@@ -103,16 +112,16 @@ h              Left       # 左移
 l              Right      # 右移
 L                         # 最后一行
 M              M-r        # 中间一行
-H              M-R        # 第一行    
+H              M-R        # 第一行  
 $              C-e        # 跳转到行尾
 :              g          # 跳转至某一行
 C-d            M-Down     # 下翻半页
 C-u            M-Up       # 上翻半页
 C-f            Page down  # 下翻一页
 C-b            Page up    # 上翻一页
-w              M-f        # 下一个字符     
+w              M-f        # 下一个字符   
 b              M-b        # 前一个字符
-q              Escape     # 退出        
+q              Escape     # 退出      
 ?              C-r        # 往上查找
 /              C-s        # 往下查找
 n              n          # 查找下一个
@@ -130,13 +139,21 @@ Enter          M-w        # 确认选择内容, 并退出
 :delete-buffer -b 1       # 删除 buffer_1
 ```
 
-# mouse-mode 
+# mouse-mode
+
 ```
 :set -g mouse on           # 打开鼠标模式
 ```
 
+# plugin
+
+```
+alt + 8 fzf显示所有的Windows和pane
+```
+
 
 # References
+
 https://gist.github.com/MohamedAlaa/2961058
 https://tmuxcheatsheet.com/
 
@@ -145,4 +162,3 @@ http://man.openbsd.org/OpenBSD-current/man1/tmux.1
 
 可以通过 $HOME/.tmux.conf 更改配置, 参考一些比较好的 tmux 配置:
 https://github.com/gpakosz/.tmux
-
