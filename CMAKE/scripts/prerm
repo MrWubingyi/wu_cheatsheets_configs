@@ -1,0 +1,64 @@
+function LOG_ERR() {
+    echo -e "\033[1;31;40m"$*"\033[0m"
+}
+
+function LOG_WAR() {
+    echo -e "\033[1;33;40m"$*"\033[0m"
+}
+
+function LOG_INFO() {
+    echo -e "\033[1;32;40m"$*"\033[0m"
+}
+
+function LOG_DEBUG() {
+    echo -e "\033[1;30;40m"[Debug:$*======================]"\033[0m"
+}
+
+function do_clean_old_service() {
+    local t_old_service=
+    #find all old service
+    t_old_service=$(grep /usr/lib/systemd/system/*.service -ie "ExecStart=/root/program" | cut -f1 -d":")
+    for t_service in ${t_old_service}; do
+        if [ -e "${t_service}" ]; then
+            t_name=${t_service##*/}
+            if [ -n "${t_name}" ]; then
+                LOG_INFO "stop service ${t_name}!!!"
+                systemctl stop ${t_name}
+                systemctl disable ${t_name}
+            fi
+        fi
+        LOG_INFO "delete service ${t_name}!!!"
+        rm -rf ${t_service}
+    done
+
+    systemctl reset-failed
+    systemctl daemon-reload
+}
+
+function do_clean_rclocal() {
+    local t_flag=
+    t_flag=$(grep /etc/rc.local -ie "setup_dpdk_env")
+    if [ -n "${t_flag}" ]; then
+        LOG_INFO "clean rc.local!!"
+        sed -i '/setup_dpdk_env.sh/d' /etc/rc.local
+    fi
+}
+
+function do_clean() {
+    do_clean_old_service
+    do_clean_rclocal
+}
+
+
+
+if [ "$1" = "1" ]; then
+echo "-----------------------"
+echo "RPM is Getting upgraded"
+echo  "-----------------------"
+elif [ "$1" = "0" ]; then
+echo "-----------------------"
+echo "RPM is Getting removed"
+do_clean
+echo "server is Getting removed"
+echo "-----------------------"
+fi

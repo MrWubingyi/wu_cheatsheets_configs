@@ -1,0 +1,282 @@
+cd $(dirname $0)
+YA_ENV="export YA_HOME=/root/program"
+YA_PATH=${YA_HOME}
+SOURCE_DIR=/root/dpdk_env
+PROGRAM_DIR="/root/tools" #默认路径，如果没有环境变量，默认为此路径
+PROGRAM_DPDK=${PROGRAM_DIR}/dpdk
+FIELD_DIR="/root/program"
+function LOG_ERR() {
+    echo -e "\033[1;31;40m"$*"\033[0m"
+}
+
+function LOG_WAR() {
+    echo -e "\033[1;33;40m"$*"\033[0m"
+}
+
+function LOG_INFO() {
+    echo -e "\033[1;32;40m"$*"\033[0m"
+}
+
+function LOG_DEBUG() {
+    echo -e "\033[1;30;40m"[Debug:$*======================]"\033[0m"
+}
+
+function do_real_copy() {
+    t_src=$1
+    t_dst=$2
+    local t_path=
+
+    cd ${t_src}
+    t_arr=$(find ./ -type f)
+
+    for t_name in ${t_arr}; do
+        cd ${t_dst}
+        t_name=${t_name#*/}
+        t_num=$(echo ${t_name} | grep -o "/" | wc -l)
+
+        t_flag=`find ./ -samefile ${t_name} 2>/dev/null`
+
+        if [ -n "${t_flag}" ]; then
+            rm -rf ${t_dst}/${t_name}
+        fi
+
+        # LOG_INFO "cp file ${t_name}"
+        if [ ${t_num} -gt 0 ]; then
+            t_path=${t_name%/*}
+            mkdir -p ${t_path}
+            cp -raf ${t_src}/${t_name} ${t_dst}/${t_path}
+        else
+            cp -raf ${t_src}/${t_name} ${t_dst}/
+        fi
+
+    done
+
+    cd $(pwd)
+
+}
+
+
+function do_install_tools() {
+    # LOG_INFO "--copying tools..."
+    # if [ ! -d "/root/tools" ]; then
+    #     LOG_INFO "mkdir /root/tools!!!"
+    #     mkdir -p /root/tools
+    # fi
+
+    #cp -raf ${SOURCE_DIR}/tools /root/
+    # do_real_copy ${SOURCE_DIR}/tools /root/tools
+
+    #判断该文件是否有可执行权限
+    file /root/tools/make_executable.sh | grep executable >/dev/null
+    if [ $? == 0 ]; then
+        chmod +x /root/tools/make_executable.sh
+    fi
+    bash /root/tools/make_executable.sh /root/tools/
+    LOG_INFO "--OK"
+
+    # LOG_INFO "--copying rpms..."
+    # cp -raf ${SOURCE_DIR}/rpms /root/
+    # LOG_INFO "--OK"
+
+    # LOG_INFO "--install rpms..."
+    # for depinstall in $(find /root/rpms -maxdepth 2 -type f -iname "*.install"); do
+    #     bash /root/tools/make_executable.sh $depinstall
+
+    #     if [ -f ${depinstall} ]; then
+    #         #bash $dir/*.install
+    #         bash ${depinstall}
+    #     fi
+    # done
+    # LOG_INFO "--OK"
+}
+
+function do_install_additional() {
+    declare -a install_dir
+    for tmp in $(find ${SOURCE_DIR}/program -maxdepth 1 -type d); do
+        tmpdir=${tmp##*/}
+        if [[ $g_rmap_flag == 0 ]] && [[ "${tmpdir}"x == "rmap"x ]]; then
+            continue
+        fi
+        if [[ $g_rtxdr_flag == 0 ]] && [[ "${tmpdir}"x == "rtxdr"x ]]; then
+            continue
+        fi
+        install_dir=(${install_dir[*]} "$tmp")
+    done
+    #install_dir=`find ${SOURCE_DIR}/program -maxdepth 1 -type d ! -path "${SOURCE_DIR}/program/rmap" ! -path "${SOURCE_DIR}/program/rtxdr" `
+
+    i=1
+    for ((i = 1; i < ${#install_dir[@]}; i++)); do
+        pro_name=${install_dir[i]##*/}
+        pro_dir=${PROGRAM_DIR}/${pro_name}
+        LOG_INFO "--copying program ${pro_name}..."
+        if [ ! -d "${pro_dir}" ]; then
+            LOG_INFO "mkdir ${pro_dir}!!!"
+            mkdir -p ${pro_dir}
+        fi
+        #cp -ra ${install_dir[i]} ${PROGRAM_DIR}
+
+        do_real_copy ${install_dir[i]} ${pro_dir}
+        chmod +x /root/tools/dpdk/usertools/*
+        chmod +x /root/tools/dpdk/dpdk.install
+        chmod +x /root/tools/dpdk/eth_info_tbl.sh
+        chmod +x /root/tools/dpdk/setup_dpdk_env.sh
+        chmod +x /root/tools/fileman/*
+        LOG_INFO "--copying program ${pro_name} done!!!"
+
+        LOG_INFO "--installing program ${pro_name}..."
+        install=$(find ${pro_dir} -maxdepth 1 -type f -iname "*.install")
+        if [ ${install} ]; then
+            bash /root/tools/make_executable.sh ${install}
+            bash ${install}
+        fi
+        LOG_INFO "--installing program ${pro_name} done!!!"
+    done
+}
+
+function do_install() {
+    if [ ! -d ${PROGRAM_DIR} ]; then
+        mkdir -p ${PROGRAM_DIR}
+    fi
+
+    #安装工具
+    do_install_tools
+
+    #安装附加
+    do_install_additional
+    #安装次要程序
+    #do_set_dpi
+}
+
+
+function do_log_crontab() {
+    local file_path=${PROGRAM_DIR}/dpi/log.txt
+    local log_path="/etc/logrotate.d/dpi_log"
+    echo "${file_path}" >${log_path}
+    cat >>${log_path} <<EOF
+{
+    size 10M
+    create 0644 root root
+    rotate 4
+    missingok
+    notifempty
+    copytruncate
+}
+EOF
+
+    echo "*/5 * * * * /usr/sbin/logrotate /etc/logrotate.d/dpi_log" >/var/spool/cron/root
+}
+
+
+function do_others() {
+    #拷贝README
+    cp ${SOURCE_DIR}/README ${FIELD_DIR}
+    #创建字段表文件夹
+    mkdir -p ${FIELD_DIR}/field
+
+    #设置产生崩溃core文件
+    : <<EOF
+    ulimitsize=$(ulimit -c)
+    if [ "${ulimitsize}"x != "unlimited"x ];then
+        cp /etc/profile /etc/profile.bak
+        if [ -z "$(sed -n "/^ulimit -c.*/p" /etc/profile)" ];then
+            echo "ulimit -c unlimited" >> /etc/profile
+        else
+            sed -i "s/^ulimit -c.*$/ulimit -c unlimited/g" /etc/profile
+        fi
+        #echo "ulimit -c unlimited" >> /etc/profile
+    fi
+EOF
+
+    ## 添加DPDK 开机自启
+    # grep "^${PROGRAM_DPDK}/setup_dpdk_env" /etc/rc.local
+    # if [ $? -ne 0 ]
+    # then
+    #     echo "${PROGRAM_DPDK}/setup_dpdk_env.sh -b ${g_portarr[@]}" >> /etc/rc.local
+    #     chmod +x /etc/rc.local
+    #     LOG_INFO "DPDK AutoStart !"
+    # fi
+    LOG_INFO "--setting dpdk systemd..."
+
+    lbegin=ETH_NAME_LIST
+    lend=ETH_NAME_LIST\=\"${g_portarr[@]}\"
+    #echo $begin
+    #echo $end
+    #echo ${g_portarr[@]}
+    #sed  -i "s|^ETH_NAME_LIST=.*|ETH_NAME_LIST=\"\`${g_portarr[@]}\`\"|g" ${PROGRAM_DPDK}/setup_dpdk_env.sh
+    sed -i "s/${lbegin}\=.*/${lend}/g" ${PROGRAM_DPDK}/setup_dpdk_env.sh
+
+    #sed  -i "s/^ETH_NAME_LIST=\".*\"/ETH_NAME_LIST=\"${g_portarr[@]}\"/g" ${PROGRAM_DPDK}/setup_dpdk_env.sh
+    cp ${PROGRAM_DPDK}/yaDpdkEnv.service /usr/lib/systemd/system/
+    systemctl enable yaDpdkEnv
+    LOG_INFO "--OK"
+
+    LOG_INFO "--setting tmpfs..."
+    #设置tbls挂载点
+    local flag=$(sed -n '/tmpfs \/tmp\/tbls tmpfs size=30g 0 0/p' /etc/fstab)
+    if [ ! -d "/tmp/tbls" ]; then
+        mkdir -p /tmp/tbls
+    fi
+    if [ -z "${flag}" ]; then
+        echo "tmpfs /tmp/tbls tmpfs size=30g 0 0" >>/etc/fstab
+    fi
+    mount -a
+    LOG_INFO "--OK"
+
+    #定期清理dpi log
+    do_log_crontab
+}
+
+
+function install_env() {
+    # do_getopts $*
+
+    #check_old_env
+    t_check_bash=$(find ${SOURCE_DIR} -type f -iname "check_old_env.sh")
+    if [ ! -x "${t_check_bash}" ]; then
+        LOG_INFO "The script check_old_env.sh sets the limits of execution!!! "
+        chmod +x ${t_check_bash}
+    fi
+
+    bash ${t_check_bash}
+
+    mkdir -p /root/program
+    mv /root/program/dpdk /root/program/dpdk_old
+    mv /root/program/fileman /root/program/fileman_old
+
+    ln -fs /root/tools/dpdk/ /root/program/dpdk
+    ln -fs /root/tools/fileman/ /root/program/fileman
+    do_install
+    do_others
+    rm /root/dpdk_env -rf
+    
+}
+if [ "$1" = "1" ]; then
+echo "-----------------------"
+echo "RPM is Getting New install"
+install_env $*
+echo "-----------------------"
+LOG_INFO "请先执行sh ya-basic-rpms-1.0.2-x86_64.sh "
+LOG_INFO "等待安装完成"
+LOG_INFO "打开/root/program/dpdk/setup_dpdk_env.sh"
+LOG_INFO "修改脚本头部 ETH_NAME_LIST="" 将双引号中的网卡名改为需要修改的网卡名，支持多个"
+LOG_INFO "若物理内存小于128G，请手动修改/root/program/dpdk/setup_dpdk_env.sh:31 配置巨页大小"
+LOG_INFO "执行/root/program/dpdk/setup_dpdk_env.sh -h 查看配置说明"
+LOG_INFO "网卡列表可使用./tools/ethinfo.sh命令查看"
+LOG_INFO "空格分开即可，修改之后保存并重启"
+LOG_INFO "程序使用说明请参考/root/program/README"
+
+
+elif [ "$1" = "2" ]; then
+echo "-----------------------"
+echo "RPM is Getting upgraded"
+install_env $*
+echo "-----------------------"
+LOG_INFO "打开/root/program/dpdk/setup_dpdk_env.sh"
+LOG_INFO "修改脚本头部 ETH_NAME_LIST="" 将双引号中的网卡名改为需要修改的网卡名，支持多个"
+LOG_INFO "若物理内存小于128G，请手动修改/root/program/dpdk/setup_dpdk_env.sh:31 配置巨页大小"
+LOG_INFO "执行/root/program/dpdk/setup_dpdk_env.sh -h 查看配置说明"
+LOG_INFO "网卡列表可使用./tools/ethinfo.sh命令查看"
+LOG_INFO "空格分开即可，修改之后保存并重启"
+LOG_INFO "程序使用说明请参考/root/program/README"
+
+fi

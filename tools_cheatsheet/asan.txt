@@ -1,0 +1,46 @@
+// asan
+编译
+
+# 在makefile中
+CFLAGS += -O0 -fsanitize=address -fno-omit-frame-pointer -static-libasan
+CFLAGS += -fstack-protector-all
+
+
+#为 XXX.c 设定额外编译参数
+dpi_sip.o: CFLAGS += -fsanitize=address -fno-omit-frame-pointer -static-libasan
+LDLIBS += -lasan
+
+
+# 在Cmake中
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDebug" )                 #必须添加
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -static-libasan")          #必须添加(提供__asan_report_error符号)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fstack-protector-all")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-stack-protector")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address -fno-omit-frame-pointer -static-libasan")  #GDB:b __asan_report_error
+
+
+#为 XXX.c 设定额外编译参数
+set_source_files_properties(${PROJECT_SOURCE_DIR}/src/trie/sdt_trie_runtime.cpp PROPERTIES COMPILE_OPTIONS -fsanitize=address -fno-omit-frame-pointer -static-libasan)
+
+
+
+
+• asan 只开启内存泄漏检查：
+○ 1) 通过环境变量
+export ASAN_OPTIONS=detect_leaks=1
+
+ASAN_OPTIONS 默认值：
+ASAN_OPTIONS=abort_on_error=1: alloc_dealloc_mismatch=0: allocator_may_return_null=1: detect_leaks=1: detect_odr_violation=0: handle_abort=0: handle_segv=0: handle_sigbus=0: handle_sigfpe=0: handle_sigill=0: handle_sigpipe=0: handle_sigsys=0: handle_sigterm=0: strict_init_order=0: symbolize=1
+
+○ 2) 通过编译选项：
+leak:    -fsanitize=leak -static-liblsan
+address: -fsanitize=address -static-libasan
+
+/*******使用**************/
+// gcc 4.8
+b __asan_report_error
+// gcc 9
+b __asan::ReportGenericError   //发现了错误，断点位于汇报信息之前
+b __sanitizer::Die             // 发现了错误，断点位于汇报信息之后

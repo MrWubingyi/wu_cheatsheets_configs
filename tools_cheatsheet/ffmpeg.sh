@@ -18,7 +18,7 @@
 -vcodec libx264                                             # 旧写法
 -acodec aac                                                 # 旧写法
 -fs SIZE                                                    # 指定文件大小
-
+-f rtp                                                      # 指定输出格式
 
 ##############################################################################
 # 音频参数
@@ -50,16 +50,20 @@
 
 
 ##############################################################################
-# 视频转码
+# 音视频转码
 ##############################################################################
 
-ffmpeg -i input.mov output.mp4                              # 转码为 MP4
-ffmpeg -i input.mp4 -vn -c:a copy output.aac                # 提取音频
-ffmpeg -i input.mp4 -vn -c:a mp3 output.mp3                 # 提取音频并转码
-ffmpeg -i input.mov -c:v libx264 -c:a aac -2 out.mp4        # 指定编码参数
-ffmpeg -i input.mov -c:v libvpx -c:a libvorbis out.webm     # 转换 webm
-ffmpeg -i input.mp4 -ab 56 -ar 44100 -b 200 -f flv out.flv  # 转换 flv
-ffmpeg -i input.mp4 -an animated.gif                        # 转换 GIF
+ffmpeg -i input.mov output.mp4                                    # 转码为 MP4
+ffmpeg -i input.mp4 -vn -c:a copy output.aac                      # 提取音频
+ffmpeg -i input.mp4 -vn -c:a mp3 output.mp3                       # 提取音频并转码
+ffmpeg -i input.mov -c:v libx264 -c:a aac -2 out.mp4              # 指定编码参数
+ffmpeg -i input.mov -c:v libvpx -c:a libvorbis out.webm           # 转换 webm
+ffmpeg -i input.mp4 -ab 56 -ar 44100 -b 200 -f flv out.flv        # 转换 flv
+ffmpeg -i input.mp4 -an animated.gif                              # 转换 GIF
+ffmpeg -y -i input.h263 -c:v copy out.mp4                         # 转换h263
+ffmpeg -f g723_1 -ac 1 -y -i input.g723 out.wav                   # 转换g723
+ffmpeg -y -i input.h261 -c:v copy -f avi out.avi                  # 转换h261->avi
+ffmpeg -f s16le -ar 8000 -ac 1 -i input.g728 -c:a copy out.wav    # 转换g728->wav
 
 
 ##############################################################################
@@ -70,6 +74,21 @@ ffmpeg -i input.mp4 -ss 0 -t 60 first-1-min.mp4             # 切割开头一分
 ffmpeg -i input.mp4 -ss 60 -t 60 second-1-min.mp4           # 一分钟到两分钟
 ffmpeg -i input.mp4 -ss 00:01:23.000 -t 60 first-1-min.mp4  # 另一种时间格式
 
+##############################################################################
+# 合并视频
+##############################################################################
+# 两视频拼接
+ffmpeg -y -i input1.mp4 -i input2.mp4 -filter_complex \"[0:v]pad=iw*2:ih[int];[int][1:v]overlay=W/2:0[vid]\" -map \"[vid]\" -c:v libx264 -crf 23 -preset veryfast out.mp4
+# 音视频拼接
+ffmpeg -i input1.h264 -i input2.wav  -c:v copy -c:a aac -strict experimental out.mp4
+# 两音频拼接
+ffmpeg -i input1.wav -i input2.wav -filter_complex amix=inputs=2:duration=first:dropout_transition=2 out.wav
+# 两视频一音频
+ffmpeg -y -i input1.h264 -i input2.h264 -i input3.wav -filter_complex \"[0:v][1:v]hstack=inputs=2[v];[2:a]anull[a];[v][a]amix=inputs=2\" -map \"[v]\" -map \"[a]\" out.mp4
+# 一视频两音频
+ffmpeg -y -i input1.h264 -i input2.wav -i input3.wav -filter_complex \"[1:a][2:a]amix=inputs=2[a]\" -map 0:v -map \"[a]\" out.mp4
+# 两视频两音频
+ffmpeg -y -i input1.h264 -i input2.h264 -i input1.wav -i input2.wav -filter_complex \"[0:v][1:v]hstack=inputs=2[v];[2:a][3:a]amerge=inputs=2[a]\" -map \"[v]\" -map \"[a]\" out.mp4
 
 ##############################################################################
 # 视频尺寸
@@ -86,7 +105,20 @@ ffmpeg -i input.mp4 -vf "crop=400:300:10:10" output.mp4     # 视频尺寸裁剪
 ffmpeg -i sub.srt sub.ass                                   # 字幕格式转换
 ffmpeg -i input.mp4 -vf ass=sub.ass out.mp4                 # 烧录字幕进视频
 ffmpeg -i "<url>" out.mp4                                   # 下载视频
+ffmpeg -re -stream_loop -1 -i h261.mp4 -c:v h261   -f_strict experimental -an -f rtsp  rtsp://192.168.105.51:8554/stream # ffmpeg 推流:
 
+
+# 推流与播放(h264 + rtp)
+ffmpeg -re -i Mercury_Records.mp4 -c:v libx264 -bsf:v h264_mp4toannexb -an -f rtp  rtp://192.168.106.42:1234?pkt_size=1316
+
+# 推流与播放(h264 + udp)
+ffmpeg -re -i Mercury_Records.mp4 -c:v libx264 -bsf:v h264_mp4toannexb -an -f h264 udp://192.168.106.42:1234?pkt_size=1316
+
+# 推流与播放(ts + udp)
+ffmpeg -re -i Mercury_Records.mp4 -c:v libx264 -bsf:v h264_mp4toannexb -an -f mpegts udp://192.168.106.42:1234?pkt_size=1316
+
+# 推流与播放(ts + rtp)
+ffmpeg -re -i Mercury_Records.mp4 -c:v libx264 -bsf:v h264_mp4toannexb -an -f rtp_mpegts  rtp://192.168.106.42:1234?pkt_size=1316
 
 ##############################################################################
 # 组合用法

@@ -1,0 +1,105 @@
+if v:lang =~ "utf8$" || v:lang =~ "UTF-8$"
+   set fileencodings=ucs-bom,utf-8,latin1
+endif
+
+set nocompatible	" Use Vim defaults (much better!)
+set bs=indent,eol,start		" allow backspacing over everything in insert mode
+"set ai			" always set autoindenting on
+"set backup		" keep a backup file
+set viminfo='20,\"50	" read/write a .viminfo file, don't store more
+			" than 50 lines of registers
+set history=50		" keep 50 lines of command line history
+set ruler		" show the cursor position all the time
+
+" Only do this part when compiled with support for autocommands
+if has("autocmd")
+  augroup redhat
+  autocmd!
+  " In text files, always limit the width of text to 78 characters
+  " autocmd BufRead *.txt set tw=78
+  " When editing a file, always jump to the last cursor position
+  autocmd BufReadPost *
+  \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+  \   exe "normal! g'\"" |
+  \ endif
+  " don't write swapfile on most commonly used directories for NFS mounts or USB sticks
+  autocmd BufNewFile,BufReadPre /media/*,/run/media/*,/mnt/* set directory=~/tmp,/var/tmp,/tmp
+  " start with spec file template
+  autocmd BufNewFile *.spec 0r /usr/share/vim/vimfiles/template.spec
+  augroup END
+endif
+
+if has("cscope") && filereadable("/usr/bin/cscope")
+   set csprg=/usr/bin/cscope
+   set csto=0
+   set cst
+   set nocsverb
+   " add any database in current directory
+   if filereadable("cscope.out")
+      cs add $PWD/cscope.out
+   " else add database pointed to by environment
+   elseif $CSCOPE_DB != ""
+      cs add $CSCOPE_DB
+   endif
+   set csverb
+endif
+
+" Switch syntax highlighting on, when the terminal has colors
+" Also switch on highlighting the last used search pattern.
+if &t_Co > 2 || has("gui_running")
+  syntax on
+  set hlsearch
+endif
+
+filetype plugin on
+
+if &term=="xterm"
+     set t_Co=8
+     set t_Sb=[4%dm
+     set t_Sf=[3%dm
+endif
+
+" Don't wake up system with blinking cursor:
+" http://www.linuxpowertop.org/known.php
+let &guicursor = &guicursor . ",a:blinkon0"
+
+
+"高亮行尾的空格
+highlight ExtraWhitespace ctermbg=red guibg=red
+autocmd BufWinEnter * match ExtraWhitespace /\s\+$\| \+\ze\t\+\|\t\+\zs \+/
+
+
+"设置qq按键退出VIM
+map qq :q!<CR>
+
+
+"设置ds按键为去除行尾空格
+map ds :%s/\s\+$//g<CR>
+
+
+"设置dm按键为去除行尾的^M标记
+map dm :%s/\r//g<CR>
+
+
+":colorscheme blue
+"set nowrap                      "不换行
+set noswapfile                  "不生成.swp文件
+set bg=dark                     "字体高亮
+set paste                       "粘贴时 禁止自动缩进
+set completeopt=menu            "关闭草稿
+set nonu                        "不显示行号
+set ruler                       "右下角显示光标当前位置
+set scrolloff=20                "光标到上下缓冲区边距
+set nobackup                    "禁止生成临时文件
+set nocindent                   "不使用C风格缩进
+set noautoindent                "不使用自动缩进
+set shiftwidth=4                "自动缩进字符宽度
+set ts=4                        "tab键宽度
+set expandtab                   "将tab符转为空格
+%retab!                         "对于已保存的文件,将tab转换为空格
+set ignorecase                  "搜索时 忽略大小写
+syntax on                       "语法高亮
+set hls                         "搜索高亮
+set nocompatible                "去除兼容vi
+set backspace=indent,eol,start  "允许使用退格键
+set fileencodings=utf-8,GB18030 "打开文件 支持的字符集

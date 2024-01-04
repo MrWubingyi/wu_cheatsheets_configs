@@ -272,6 +272,42 @@ Bar
 - [知乎：Vim 专栏](https://zhuanlan.zhihu.com/vimrc)
 
 
-## 感谢
 
-希望你觉得本文对你有用，感谢阅读。
+## 使用的vimrc配置文件
+```VimL
+"高亮行尾的空格
+highlight ExtraWhitespace ctermbg=red guibg=red
+autocmd BufWinEnter * match ExtraWhitespace /\s\+$\| \+\ze\t\+\|\t\+\zs \+/
+
+"设置qq按键退出VIM
+map qq :q!<CR>
+
+"设置ds按键为去除行尾空格
+map ds :%s/\s\+$//g<CR>
+
+"设置dm按键为去除行尾的^M标记
+map dm :%s/\r//g<CR>
+
+":colorscheme blue
+set nowrap                      "不换行
+set noswapfile                  "不生成.swp文件
+set bg=dark                     "字体高亮
+set paste                       "粘贴时 禁止自动缩进
+set completeopt=menu            "关闭草稿
+set nonu                        "不显示行号
+set ruler                       "右下角显示光标当前位置
+set scrolloff=20                "光标到上下缓冲区边距
+set nobackup                    "禁止生成临时文件
+set nocindent                   "不使用C风格缩进
+set noautoindent                "不使用自动缩进
+set shiftwidth=4                "自动缩进字符宽度
+set ts=4                        "tab键宽度
+set expandtab                   "将tab符转为空格
+%retab!                         "对于已保存的文件,将tab转换为空格
+set ignorecase                  "搜索时 忽略大小写
+syntax on                       "语法高亮
+set hls                         "搜索高亮
+set nocompatible                "去除兼容vi
+set backspace=indent,eol,start  "允许使用退格键
+set fileencodings=utf-8,GB18030 "打开文件 支持的字符集
+```

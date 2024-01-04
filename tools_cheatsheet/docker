@@ -1,0 +1,273 @@
+
+一. 安装 docker:
+yumi install docker
+关闭 selinux:
+setenforce 0
+修改：/etc/selinux/config SELINUX=disabled
+
+	
+9. 获取 docker rpm	
+yumi install --downloadonly --downloaddir=docker docker	
+
+
+10. 安装
+yum --disablerepo='*' localinstall ./*
+
+1. 导入镜像
+docker load<centos-1708-basic-env-2022-08-30.tar
+
+显示镜像
+docker images
+
+2. 启动容器
+docker run -d --name centos-dev centos:1708-basic-env /usr/sbin/init
+docker run -d --net=host --name centos_demo --privileged \
+  -v /sys/bus/pci/drivers:/sys/bus/pci/drivers \
+  -v /sys/kernel/mm/hugepages/:/sys/kernel/mm/hugepages/ \
+  -v /sys/devices/system/node/:/sys/devices/system/node/ \
+  -v /dev:/dev \
+  centos:7.4.1708  /usr/sbin/init
+
+
+
+
+3. 进入容器
+docker exec -ti centos-dev /bin/bash
+
+
+
+
+4. 在容器中进行开发
+
+
+
+
+5. host 上从容器中拷贝出来文件
+	docker cp centos-dev:/root/dev/dpi/xxxx.tar.gz ~/
+	
+6. docker commit centos-dev centos:gch
+
+
+
+
+7. docker save centos:gch>centos-gch.tar
+
+
+
+
+8. 现场操作
+	docker load<centos-gch.tar
+
+
+\\192.168.101.23\public\02_Image\03-docker
+
+• docker ctrl-p 问题：
+	○ 配置：
+	[root@localhost .docker]# cat /root/.docker/config.json 
+	{
+	"detachKeys": "ctrl-z,z"
+	}
+systemctl restart docker 生效
+
+
+二. 编译 dpdk 库(宿主机)
+wget http://192.168.101.22/archive/dpdk-17.11.3.tar.xz
+
+1）安装依赖：
+yumi install -y kernel-devel kernel-headers kernel numactl-devel numactl-libs libpcap libpcap-devel
+	
+解压并进入 dpdk-stable-17.11.3 目录：	
+
+2）开启 vhost 库编译配置开关：
+sed -i 's/CONFIG_RTE_LIBRTE_VHOST=y/CONFIG_RTE_LIBRTE_VHOST=n/' config/common_base
+
+3）导出相关环境变量：
+export RTE_SDK=`pwd`
+export RTE_TARGET=x86_64-native-linuxapp-gcc
+
+4）构建
+make install T=$RTE_TARGET DESTDIR=/usr/local -j
+
+5）配置预留巨页
+# 在 grub.cfg 中添加参数分配1G大页, 并启用 iommu
+default_hugepagesz=1GB hugepagesz=1G hugepages=20 iommu=pt intel_iommu=on 
+grub2-mkconfig -o /boot/grub2/grub.cfg
+
+重启后验证：
+cat  /sys/kernel/mm/hugepages/hugepages-1048576kB/*
+cat  /sys/devices/system/node/node1/hugepages/hugepages-1048576kB/*
+
+cat /proc/meminfo | grep -i huge
+AnonHugePages:      6144 kB
+HugePages_Total:      20
+HugePages_Free:       20
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:    1048576 kB
+
+6）配置巨页给 dpdk(做不做似乎并没有关系)
+mkdir -p /mnt/huge
+mount -t hugetlbfs nodev /mnt/huge
+cat /proc/meminfo | grep Huge
+
+6）测试运行 testpmd
+./app/test-pmd/testpmd   -c 0xE0 -n 1 -- -i
+
+5）加载相关驱动
+modprobe uio_pci_generic
+modprobe uio
+modprobe vfio-pci
+insmod x86_64-native-linuxapp-gcc/kmod/igb_uio.ko
+
+三.编译并安装 openvswitch
+1）下载：http://192.168.101.22/archive/openvswitch-2.9.2.tar.gz
+
+2）编译
+./boot.sh
+CFLAGS='-march=native' ./configure --with-dpdk=$RTE_SDK/$RTE_TARGET		
+make && make install
+
+[root@localhost openvswitch-2.9.2]# ovs-vswitchd --version
+ovs-vswitchd (Open vSwitch) 2.9.2
+DPDK 17.11.3
+
+==============================================
+3）启动 ovs-dpdk 并配置
+/usr/local/share/openvswitch/scripts/ovs-ctl start
+
+# 配置 ovs-dpdk
+ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-init=true
+ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-socket-mem="1024,1024"
+ovs-vsctl --no-wait set Open_vSwitch . other_config:pmd-cpu-mask=0x2
+
+# 创建一个支持 dpdk 的网桥
+ovs-vsctl add-br ovs-br0 -- set bridge ovs-br0 datapath_type=netdev
+# 删除 ：ovs-vsctl del-br ovs-br0
+
+# 创建 dpdk 接口并绑定到物理网卡
+ovs-vsctl add-port ovs-br0 dpdkprot01 -- set Interface dpdkprot01 type=dpdk options:dpdk-devargs=0000:3b:00.2
+2022.02.17：在此处机器失去连接
+
+# 创建 dpdk vhost-user 接口
+ovs-vsctl add-port ovs-br0 vhost-user1 -- set Interface vhost-user1 type=dpdkvhostuser
+ovs-vsctl add-port ovs-br0 vhost-user2 -- set Interface vhost-user2 type=dpdkvhostuser
+ovs-vsctl add-port ovs-br0 vhost-user3 -- set Interface vhost-user3 type=dpdkvhostuser
+ovs-vsctl add-port ovs-br0 vhost-user4 -- set Interface vhost-user4 type=dpdkvhostuser
+
+# 如果需要删除的话：ovs-ofctl del-flows ovs-br0 
+
+# 配置流表转发：
+ovs-ofctl add-flow ovs-br0 in_port=1,idle_timeout=0,action=output:4
+ovs-ofctl add-flow ovs-br0 in_port=4,idle_timeout=0,action=output:1
+ovs-ofctl add-flow ovs-br0 in_port=2,idle_timeout=0,action=output:3
+ovs-ofctl add-flow ovs-br0 in_port=3,idle_timeout=0,action=output:2
+
+# 备用：ovs-ofctl add-flow ovs-br0 in_port=5,idle_timeout=0,action=output:1,output:2,output:3,output:4
+
+# 检查 /usr/local/var/run/openvswitch 目录下的 socket 文件：
+[root@localhost ~]# ll /usr/local/var/run/openvswitch
+total 8
+srwxr-x---. 1 root root 0 Feb 21 12:08 db.sock
+srwxr-x---. 1 root root 0 Feb 21 12:09 ovs-br0.mgmt
+srwxr-x---. 1 root root 0 Feb 21 12:09 ovs-br0.snoop
+srwxr-x---. 1 root root 0 Feb 21 12:08 ovsdb-server.15321.ctl
+-rw-r--r--. 1 root root 6 Feb 21 12:08 ovsdb-server.pid
+srwxr-x---. 1 root root 0 Feb 21 12:08 ovs-vswitchd.15333.ctl
+-rw-r--r--. 1 root root 6 Feb 21 12:08 ovs-vswitchd.pid
+srwxr-xr-x. 1 root root 0 Feb 21 12:15 vhost-user1
+srwxr-xr-x. 1 root root 0 Feb 21 12:15 vhost-user2
+srwxr-xr-x. 1 root root 0 Feb 21 12:15 vhost-user3
+srwxr-xr-x. 1 root root 0 Feb 21 12:15 vhost-user4
+
+# 查看：
+ovs-vsctl show
+ovs-ofctl show ovs-br0
+ovs-ofctl dump-flows ovs-br0
+ovs-ofctl dump-ports ovs-br0
+
+四. 创建容器 pktgen 与 testpmd
+1）导入镜像
+docker load <centos-dpdk-dev-env.tar
+[root@localhost ~]# docker images
+REPOSITORY            TAG       IMAGE ID       CREATED      SIZE
+centos-dpdk-dev-env   latest    31f12063cdeb   4 days ago   1.07GB
+
+2）pktgen 容器
+2.1）启动 pktgen 容器：
+docker run -d --name pktgen --privileged \
+-v /dev/hugepages:/dev/hugepages \
+-v /usr/local/var/run/openvswitch:/home/run/openvswitch \
+-v /sys/bus/pci/drivers:/sys/bus/pci/drivers \
+-v /sys/kernel/mm/hugepages/:/sys/kernel/mm/hugepages/ \
+-v /sys/devices/system/node/:/sys/devices/system/node/ \
+-v /dev:/dev  centos-dpdk-dev-env  /usr/sbin/init
+
+2.2）进入容器，
+docker exec -ti pktgen /bin/bash
+
+2.3）编译 dpdk（在 dpdk-stable-17.11.3 目录下）
+sed -i 's/CONFIG_RTE_LIBRTE_VHOST=y/CONFIG_RTE_LIBRTE_VHOST=n/' config/common_base
+export RTE_SDK=`pwd`
+export RTE_TARGET=x86_64-native-linuxapp-gcc
+make install T=$RTE_TARGET DESTDIR=/usr/local -j
+
+2.4）编译 pktgen:
+wget http://192.168.101.22/archive/pktgen-3.4.9.tar.gz
+tar xfv pktgen-3.4.9.tar.gz && cd pktgen-3.4.9
+wget -P lib/lua http://192.168.101.22/archive/lua-5.3.4.tar.gz
+make
+
+2.5）启动 pktgen:
+在 pktgen 目录中启动 pktgen:
+./app/x86_64-native-linuxapp-gcc/pktgen  -c 0x19 --master-lcore 3 -n 1 \
+--socket-mem 1024,1024 --file-prefix pktgen --no-pci  \
+--vdev 'net_virtio_user0,mac=00:00:00:00:00:01,path=/home/run/openvswitch/vhost-user1' \
+--vdev 'net_virtio_user1,mac=00:00:00:00:00:02,path=/home/run/openvswitch/vhost-user2' \
+-- -T -P -m "0.0,4.1"
+	
+3）testpmd 容器	
+3.1）启动 testpmd 容器：
+docker run -d --name testpmd --privileged \
+-v /dev/hugepages:/dev/hugepages \
+-v /usr/local/var/run/openvswitch:/home/run/openvswitch \
+-v /sys/bus/pci/drivers:/sys/bus/pci/drivers \
+-v /sys/kernel/mm/hugepages/:/sys/kernel/mm/hugepages/ \
+-v /sys/devices/system/node/:/sys/devices/system/node/ \
+-v /dev:/dev  centos-dpdk-dev-env  /usr/sbin/init
+
+3.0）进入 testpmd 容器
+docker exec -ti testpmd /bin/bash
+
+3.2）编译 dpdk（在 dpdk-stable-17.11.3 目录下）
+sed -i 's/CONFIG_RTE_LIBRTE_VHOST=y/CONFIG_RTE_LIBRTE_VHOST=n/' config/common_base
+export RTE_SDK=`pwd`
+export RTE_TARGET=x86_64-native-linuxapp-gcc
+make install T=$RTE_TARGET DESTDIR=/usr/local -j
+
+3.3）运行 testpmd:
+./x86_64-native-linuxapp-gcc/app/testpmd  -c 0xE0 -n 1  \
+--socket-mem 1024,1024 --file-prefix testpmd --no-pci \
+--vdev 'virtio_user3,mac=00:00:00:00:00:03,path=/home/run/openvswitch/vhost-user3' \
+--vdev 'virtio_user4,mac=00:00:00:00:00:04,path=/home/run/openvswitch/vhost-user4' \
+-- -i --burst=64 --disable-hw-vlan --rxq=1 --txq=1 --rxd=256 --txd=256 -a --coremask=0xc0
+
+3.4）发包：
+pktgen 命令：	
+set all rate 10
+set 0 count 100
+set 1 count 200
+str
+testpmd 中验证：
+show port stats all
+=======================================================================================================
+mirror 端口：
+ovs-vsctl add-port ovs-br0 vhost-user3-tap \
+    -- --id=@p get port vhost-user3-tap \
+    -- --id=@m create mirror name=m0 select-all=true output-port=@p \
+    -- set bridge ovs-br0 mirrors=@m -- set Interface vhost-user3-tap type=dpdkvhostuser
+	
+配置流表转发：	
+ovs-ofctl add-flow ovs-br0 in_port=3,idle_timeout=0,action=output:2	
+
+# 创建 dpdk 接口并绑定到物理网卡
+ovs-vsctl add-port ovs-br0 dpdkprot01 -- set Interface dpdkprot01 type=dpdk options:dpdk-devargs=0000:3b:00.2

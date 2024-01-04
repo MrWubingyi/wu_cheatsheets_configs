@@ -1,0 +1,172 @@
+cmake_minimum_required(VERSION 3.15)
+
+set(ProName "yaDpi")
+project(${ProName} LANGUAGES C CXX)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDRAD 11)
+
+# 获取 gcc 版本
+execute_process(
+  COMMAND ${CMAKE_C_COMPILER} -dumpversion
+  OUTPUT_VARIABLE GCC_VERSION
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+message(STATUS "gcc version ${GCC_VERSION}")
+
+#  版本设置
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/VERSION")
+  file(READ "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" PROGRAM_VERSION)
+  string(STRIP "${PROGRAM_VERSION}" PROGRAM_VERSION)
+  string(TIMESTAMP PROJECT_VERSION_TWEAK "%Y%m%d")
+else()
+  message(FATAL_ERROR "FILE ${CMAKE_CURRENT_SOURCE_DIR}/VERSION not found")
+endif()
+
+message("program version ${PROGRAM_VERSION}")
+message("patch verson ${PROJECT_VERSION_TWEAK}")
+
+# 生成 version.h
+configure_file(
+  cmake/version.h.in
+  include/version.h
+  @ONLY
+)
+
+set(AppName "${ProName}_${PROGRAM_VERSION}")
+
+
+# 适配 旧版 makefile
+add_definitions(-DPROJECT_VERSION_STR="${PROGRAM_VERSION}")
+
+if (NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Build Type" FORCE)
+endif()
+
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
+# set(CMAKE_CXX_FLAGS_DEBUG "-O2 -g -D_FORTIYF_SOURCE=1 -fstack-protector-strong -Wformat -Werror=format-security")
+# set(CMAKE_CXX_FLAGS_DEBUG "-O2 -g -D_FORTIFY_SOURCE=1")
+# set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O1 -g -D_FORTIFY_SOURCE=3")
+# D_FORTIFY_SOURCE
+
+# 是否生成 compile_command.json
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+option(EMABLE_MEMORY_CHECK "Enable memory check" OFF)
+option(USE_CLANG_TIDY  "Use clang-tidy for static analysis" OFF)
+
+if (USE_CLANG_TIDY)
+  find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
+  if (CLANG_TIDY_EXE)
+    set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
+    set(CMAKE_C_CLANG_TIDY "${CLANG_TIDY_EXE}")
+  else()
+    message(WARNING "clang-tidy not found")
+  endif()
+endif()
+
+if (EMABLE_MEMORY_CHECK)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
+endif()
+
+include(GNUInstallDirs)
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/run)
+
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX "/root/program" CACHE PATH "..." FORCE)
+endif()
+message(STATUS "install prefix: ${CMAKE_INSTALL_PREFIX}")
+
+set(INSTALL_LIBDIR ${CMAKE_PROJECT_NAME}/${CMAKE_INSTALL_LIBDIR} CACHE PATH "Installation directory for libraries")
+set(INSTALL_BINDIR ${CMAKE_PROJECT_NAME} CACHE PATH "Installation directory for executables")
+set(INSTALL_INCLUDEDIR ${CMAKE_PROJECT_NAME}/${CMAKE_INSTALL_INCLUDEDIR} CACHE PATH "Installation directory for header files")
+set(INSTALL_ROOTDIR ${CMAKE_PROJECT_NAME} CACHE PATH "Installation directory for files")
+set(INSTALL_CMAKEDIR ${CMAKE_PROJECT_NAME} CACHE PATH "Installation directory for header files")
+
+# 报告安装位置
+message(STATUS "Project will be installed to ${CMAKE_INSTALL_PREFIX}")
+foreach(p LIB BIN INCLUDE CMAKE ROOT)
+  file(TO_NATIVE_PATH ${CMAKE_INSTALL_PREFIX}/${INSTALL_${p}DIR} _path)
+  message(STATUS "Installing ${p} components to ${_path}")
+  unset(_path)
+endforeach()
+
+# dpdk 编译导出的 cflags
+list(APPEND dpdk_cflags
+  -march=native
+  -DRTE_MACHINE_CPUFLAG_SSE
+  -DRTE_MACHINE_CPUFLAG_SSE2
+  -DRTE_MACHINE_CPUFLAG_SSE3
+  -DRTE_MACHINE_CPUFLAG_SSSE3
+  -DRTE_MACHINE_CPUFLAG_SSE4_1
+  -DRTE_MACHINE_CPUFLAG_SSE4_2
+  -DRTE_MACHINE_CPUFLAG_AES
+  -DRTE_MACHINE_CPUFLAG_PCLMULQDQ
+  -DRTE_MACHINE_CPUFLAG_AVX
+)
+
+set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:/usr/local/lib64/pkgconfig")
+
+add_subdirectory(src)
+
+add_custom_target(add_proto
+  COMMAND
+    bash ${CMAKE_CURRENT_SOURCE_DIR}/src/write_protocol.sh
+)
+
+################################################# 与打包安装相关
+install(DIRECTORY program
+DIRECTORY_PERMISSIONS
+OWNER_READ              OWNER_WRITE             OWNER_EXECUTE
+GROUP_READ                                      GROUP_EXECUTE
+WORLD_READ                                      WORLD_EXECUTE
+DESTINATION  ${CMAKE_INSTALL_PREFIX})
+install(FILES check_old_env.sh
+PERMISSIONS
+OWNER_READ              OWNER_WRITE             OWNER_EXECUTE
+GROUP_READ              GROUP_WRITE
+WORLD_READ              WORLD_WRITE
+DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+set(CPACK_PACKAGE_NAME "ya-env")#生成包文件的文件名
+set(CPACK_PACKAGING_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})#设置生成源码包的包内目录
+set(CPACK_SOURCE_IGNORE_FILES "${PROJECT_BINARY_DIR};.vscode;.history;build;tools/build/")#设置打包源码时排除的目录
+set(CPACK_SYSTEM_NAME "x86_64")
+set(CPACK_PACKAGE_VERSION ${target})#设置生成的版本号
+set(CPACK_RPM_PACKAGE_RELEASE ${VERSION_MAJOR}.el7)#设置release版本号.可以安装的系统号
+set(CPACK_PACKAGE_VENDOR "wuby")#设置供应商（打包人）
+set(CPACK_RPM_PACKAGE_GROUP "yview")#设置组
+set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION ${DCMAKE_INSTALL_PREFIX} /root)#在生成的rpm包内去掉该路径，用于解决安装时目录冲突问题
+set(CPACK_RPM_PACKAGE_SUMMARY "A basic software operating environment for ya program")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${PROJECT_SOURCE_DIR}/scripts/readme")#包含描述文件目录
+set(CPACK_PACKAGE_FILE_NAME "ya-basic-rpms-${target}-${CPACK_SYSTEM_NAME}")
+set(CPACK_RPM_FILE_NAME "ya-env-${target}-${CPACK_RPM_PACKAGE_RELEASE}-${CPACK_SYSTEM_NAME}.rpm")#生成包文件的文件名
+set(CPACK_SOURCE_GENERATOR "STGZ;RPM")#二进制源码生成器
+set(CPACK_GENERATOR "STGZ;RPM")#二进制存档生成器:
+
+set(CPACK_RPM_PRE_INSTALL_SCRIPT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/scripts/preinst)#设置安装前脚本
+set(CPACK_RPM_PRE_UNINSTALL_SCRIPT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/scripts/prerm)#设置卸载前脚本
+set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/scripts/postinst)#设置安装后脚本
+set(CPACK_RPM_POST_UNINSTALL_SCRIPT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/scripts/postrm)#设置卸载后脚本
+add_subdirectory(rpms)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/scripts")
+
+add_custom_target(pack
+    COMMAND rm ${CMAKE_HOME_DIRECTORY}/build/*.rpm -rf&&rm ${CMAKE_HOME_DIRECTORY}/build/*.sh -rf&& cpack3 .. -G RPM
+    WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}/build
+    COMMENT "build package."
+  )
+
+
+add_custom_target(publish
+    COMMAND curl -X POST -F "file=@./${CPACK_RPM_FILE_NAME}" http://192.168.101.23/upload_rpm
+    WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}/build
+    COMMENT "publish rpm package to rpm server, you can install it with: yumi install ${CPACK_PACKAGE_NAME}"
+  )
+
+add_dependencies(publish pack)
+
+include(CPack)

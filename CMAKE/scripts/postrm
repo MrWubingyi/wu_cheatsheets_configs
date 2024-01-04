@@ -1,0 +1,14 @@
+
+if [ "$1" = "1" ]; then
+echo "-----------------------"
+echo "RPM is Getting upgraded"
+echo "-----------------------"
+elif [ "$1" = "0" ]; then
+echo "-----------------------"
+echo "RPM is Getting removed"
+rm /root/tools/ -rf
+unlink /root/program/dpdk
+unlink /root/program/fileman
+echo "All Files has been removed"
+echo "-----------------------"
+fi

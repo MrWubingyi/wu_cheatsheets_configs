@@ -1,0 +1,117 @@
+1.	tcpprep ：
+功能：把pcap包改写成cache
+参数说明：
+–a client/server		自动模式，以发出DNS包，发tcp SYN为client（从网卡发出），发DNS ACK,发tcp SYN/ACK，发ICMP-port Unrechable为server（主网卡发出）
+-i input.pcap		input	输入抓包
+-o output.cache		output	输出cache
+-c 192.168.xxx.xxx			cidr	 以ip区分主从，指定ip的从主网卡发出
+例：1.把tcp.pcap抓包按照自动模式解析成cache
+tcpprep –a client –i tcp.pcap –o tcp.cache
+2.把tcp.pcap抓包按照192.168.101.1为server端解析
+tcpprep –c 192.168.101.1 –i tcp.pcap –o tcp.cache
+		
+2.	tcprewrite
+功能：将抓包内的协议头改写成所需的参数
+参数说明：
+格式	内容	含义
+--option1 ==xxx  --option2==xxx --option3==xxx……
+	--enet-dmac=str	修改dst指向的mac地址
+	--enet-smac=str	修改src指向的mac地址
+	--enet-vlan=str	增加或者去除vlan
+	--enet-vlan-tag=num	修改vlan的tag
+	--enet-vlan-cfi=num	修改vlan的cfi值
+	--enet-vlan-pri=num  	修改vlan的priority值
+	--enet-vlan-proto=str	修改vlan的protocol 为802.1q 或 802.1ad
+	-e, --endpoints=str	修改ip
+	-r, --portmap=str	修改端口
+	-C, --fixcsum  	计算传输层校验和
+-c input.cache
+	-c 	输入cache
+-i inpute.pcap
+	-i	输入抓包文件
+-o output.pcap	-o	输出抓包文件
+
+1.（2层）修改mac
+			例：修改server的dst/src mac为XX:XX:XX:AF/ XX:XX:XX:C2；
+修改client的dst/src mac为XX:XX:XX:37/ XX:XX:XX:AC;
+--enet-dmac=XX:XX:XX:AF, XX:XX:XX:37 
+-- enet-smac= XX:XX:XX:C2, XX:XX:XX:AC
+			2.修改VLAN
+例：删除vlan
+--enet-vlan=del
+	增加vlan，CFI为40，priority为4；
+--enet-vlan-tag=add
+      			--enet-vlan-cfi=40
+       			--enet-vlan-pri=4
+			3.（3层）修改ip
+例：server的ip改成192.168.1.1，client的ip改成192.168.2.2；
+				--portmap=192.168.1.1：192.168.2.2
+			4.（4层）修改端口
+例：80端口改成8080,22端口改成8022
+--portmap=80:8080,22:8022
+5.复杂例子
+输入tcp.pcap, 把tcp.pcap抓包按照自动模式解析成cache，修改server的dst/src mac为XX:XX:XX:AF/ XX:XX:XX:C2，ip改成192.168.1.1，80端口改成8080；修改client的dst/src mac为XX:XX:XX:37/ XX:XX:XX:AC;，ip改成192.168.2.2，端口22改成8022，删除vlan头。
+		第一步：tcpprep –a client –i tcp.pcap –o tcp.cache
+第二步：tcprewrite --enet-dmac=XX:XX:XX:AF, XX:XX:XX:37 -- enet-smac= XX:XX:XX:C2, XX:XX:XX:AC --enet-vlan=del --portmap=192.168.1.1：192.168.2.2 --portmap=80:8080,22:8022 -c tcp.cache -i tcp.pcap -o output.pcap
+Tcpreplay
+功能：将抓包回放
+参数说明：
+–c input.cache	
+-i ens222	发server包的网卡
+-I ens256	发client包的网卡
+-x 10	10倍原发包速率
+-p 1000	发包以1000/s的速率发包
+-l 0	循环发包
+-M 100	按100Mbps速率发送
+input.pcap	回放input
+
+将	Output.pcap的抓包，按照input.cache里面的规则，通过两个网卡互相发包
+例：按原速率发包  tcpreplay –i ens256 input.pcap
+	循环发包		tcpreplay –i ens256 –l 0 input.pcap
+	按100Mbps速率循环发送5次 tcpreplay –i ens256 –l 5 –M 100 input.pcap
+
+	Ens224,发client的包，ens256发server的包，循环发包以原发包数的100倍
+	tcpreplay –i ens256 –I ens 224 –l 0 –x 100 –c input.cache tcp.pcap
+	 
+
+Tcpdump
+功能：抓包工具
+参数
+–i 网卡	选择抓包的网卡
+-w out.pcap	输出成文件
+src 192..xxx.xxx 	过滤源ip为xxx的包
+dst 192..xxx.xxx 	过滤目的ip为xxx的包
+port xx  	过滤端口为xx的包
+not arp 	不存ARP
+-s n 	过滤n字节的包；为0时抓所有的包
+host xxx	过滤ip为xxx的包
+tcp [m]=x	过滤tcp第m字节等于x的包
+tcp [m:n]=x	过滤tcp包偏移m位，的n位为x的包
+例：过滤http协议的get包，网卡为ens1，存文件
+tcpdump –i ens1 tcp [20:2]=0x4745 –w out.pcap
+过滤http协议的包，网卡为ens1，存文件
+tcpdump –i ens1 tcp [20:2]=0x4745 or tcp [20:2]=0x4854 –w out.pcap
+过滤包含ip192.168.0.1的包，网卡为ens1，存文件
+tcpdump –i host 192.168.0.1 –w out.pcap
+过滤包含ip192.168.0.1：5060的包，网卡为ens1，存文件
+tcpdump –i host 192.168.0.1 port 5060 –w out.pcap
+过滤包含发送到ip192.168.0.1：5060的包，网卡为ens1，存文件
+tcpdump –i dst 192.168.0.1 port 5060 –w out.pcap
+
+wireshark   功能：解析抓包文件
+过滤参数
+端口过滤	tcp.port == 80 || udp.port == 80
+ip 过滤	ip.addr==192.168.20.252/ ip.src==192.168.20.252
+端口+ip	ip.src==172.20.3.190&&tcp.port==80&& udp.port==80
+tcp 端口 + ip		ip.src==172.20.3.190&&tcp.port==80
+udp 端口 xxx + 非端口 xxx	tcp.port == 80 &&!tcp.port==81
+tcp 负载 第 x 个字节	tcp.payload[x]==00
+tcp 负载 第 [m,n] 个字节	Tcp. payload [m:n-m]==47:45
+tcp 负载长度 [m,n]	tcp.len==1460
+tcp 负载 字符串 "xyz" 过滤	tcp.payload contains "xyz"
+协议过滤	http/tcp/udp/
+tcp 负载正则过滤	tcp.payload matches "GET */ HTTP"
+
+ 
+ 
+

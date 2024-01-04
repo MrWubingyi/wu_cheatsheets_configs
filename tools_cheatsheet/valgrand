@@ -1,0 +1,6 @@
+
+
+valgrind --leak-check=yes --show-leak-kinds=all --tool=memcheck ./yaDpiContent -l 0-1 -- -r 1 -p 3,4 -l 5 --task_id 0 >> check.txt
+
+
+valgrind --tool=memcheck --leak-check=full ./bin/enginewTest -f /root/cap/smbv2-2022-10-20.pcapng

@@ -765,7 +765,7 @@ source ~/github/profiles/my_bash_init.sh
 # 反向代理：将外网主机（202.115.8.1）端口（8443）转发到内网主机 192.168.1.2:443
 ssh -CqTnN -R 0.0.0.0:8443:192.168.1.2:443  user@202.115.8.1
 
-# 正向代理：将本地主机的 8443 端口，通过 192.168.1.3 转发到 192.168.1.2:443 
+# 正向代理：将本地主机的 8443 端口，通过 192.168.1.3 转发到 192.168.1.2:443
 ssh -CqTnN -L 0.0.0.0:8443:192.168.1.2:443  user@192.168.1.3
 
 # socks5 代理：把本地 1080 端口的 socks5 的代理请求通过远程主机转发出去
@@ -774,7 +774,30 @@ ssh -CqTnN -D localhost:1080  user@202.115.8.1
 # 终端下正确设置 ALT 键和 BackSpace 键
 http://www.skywind.me/blog/archives/2021
 
+# 查看json中的指定字段
+find -name "*.json*" |xargs -i cat {} |grep -oE '"login":"[^,]*"'
 
+# 在文件中，依据指定的字符做切割
+find -name "*.tbl*" |xargs -i cat {} |cut -d "|" -f 20-23 |uniq
+
+# 挂载一个windows共享目录
+mount -t cifs -o username=yview,password=yview.cn //192.168.106.72/d/pcapfile/ /home/wuby/pcaps/pc
+
+# 查看程序地址上的函数调用堆栈信息
+addr2line -r yaDpiContent -a  0x00007fff00000011
+
+# 安装 gcc 9 以支持 c++ 17:
+yumi install devtoolset-9
+scl enable devtoolset-9 bash 
+
+# 将时间戳转换为时间
+date --date='@2147483647'
+
+#从第2行开始打印
+cat /etc/passwd | awk -F ':' '{for(i=2;i<=NF-1;i++) printf $i" "; print ""}' 
+
+# 发送盖目录下所有pcap包
+find -type f -iname "*.pcap*" | xargs -i tcpreplay -i ens224 -M 100  {} 2>/dev/null
 ##############################################################################
 # 有用的函数
 ##############################################################################

@@ -457,5 +457,9 @@ https://git-scm.com/book/en/v2
 ##############################################################################
 # 子模块
 ##############################################################################
+git submodule add -b master git@192.168.20.98:dpi_tools/yatools.git tools        添加子模块
+git submodule status              查看子模块状态
 git submodule foreach git pull    子模块更新
+git submodule update --remote --recursive       在主模块中更新子模块的commit(自己更新后的操作)
+git submodule update --rebase                   单独更新了子模块后，在主模块中将子模块拉取到最新分支(协助拉取时的操作)
 

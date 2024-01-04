@@ -1,0 +1,4 @@
+ya-dpdk-env provides a basic software operating environment for ya program.
+ya-dpdk-env can provide dpdk environment,fileman environment and tools . you
+can see detailed description for user on /root/program/README file.
+

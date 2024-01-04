@@ -1,0 +1,8 @@
+#ifndef _VERSION_H
+#define _VERSION_H
+
+#include "string.h"
+
+const char PROGRAM_VERSION[64] = "@PROGRAM_VERSION";
+
+#endif
