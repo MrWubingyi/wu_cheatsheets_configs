@@ -157,7 +157,7 @@ pstree                    # 树形列出所有进程，pstree 默认一般不带
 pstree {user}             # 进程树列出某用户的进程
 pstree -u                 # 树形列出所有进程以及所属用户
 pgrep {procname}          # 搜索名字匹配的进程的 pid，比如 pgrep apache2
-
+pstack {pid}              # 查看该进程当前每个线程的堆栈信息
 kill {pid}                # 结束进程
 kill -9 {pid}             # 强制结束进程，9/SIGKILL 是强制不可捕获结束信号
 kill -KILL {pid}          # 强制执行进程，kill -9 的另外一种写法
@@ -168,6 +168,7 @@ pkill {procname}          # 按名称结束进程，除名称外还可以有其�
 
 top                       # 查看最活跃的进程
 top -u {user}             # 查看某用户最活跃的进程
+iotop                     # 查看io占用情况
 
 any_command &             # 在后台运行某命令，也可用 CTRL+Z 将当前进程挂到后台
 jobs                      # 查看所有后台进程（jobs）
