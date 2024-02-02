@@ -463,3 +463,10 @@ git submodule foreach git pull    子模块更新
 git submodule update --remote --recursive       在主模块中更新子模块的commit(自己更新后的操作)
 git submodule update --rebase                   单独更新了子模块后，在主模块中将子模块拉取到最新分支(协助拉取时的操作)
 
+配置子模块配置文件
+```
+vim .gitmodules
+```
+[submodule "submodule"]
+  path = submodule
+  url = ./submodule/.git
